@@ -1,0 +1,4 @@
+{
+  "REFERENCE_GENOME_DIRECTORY" : "/home/wonjunetai/Documents/KimLab/input/refGenome/Homo_sapiens.GRCh37.70.dna.chromosome.",
+  "LIST_OF_TRANSCRIPTS": ["/home/wonjunetai/Documents/KimLab/input/for_preprocess/transcripts.gtf"]
+}
