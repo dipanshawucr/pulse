@@ -87,9 +87,17 @@ if __name__ == "__main__":
 
     # extract each transcript of this gene
 
-    aslocation = open('ASlocation.out', 'w')
-    complete = open('complete_transcripts.fasta', 'w')
+    as_location_output = open(normalize_unicode_data(preprocess_settings["AS_LOCATION_OUTPUT_LOCATION"]) +
+                      'ASlocation.out', 'w')
+    complete_output = open(normalize_unicode_data(preprocess_settings["LOCATION_OF_COMPLETE_TRANSCRIPTS"]) +
+                           'complete_transcripts.fasta', 'w')
+    as_events_output = open(normalize_unicode_data(preprocess_settings["LOCATION_OF_EVENTS"]) +
+                            'events.fa', 'w')
 
     for TSS_id, list_transcripts in dict_group_transcripts.iteritems():
         if len(list_transcripts) > 1:
-            fetch_events(list_transcripts, aslocation, complete)
+            print >> as_events_output, fetch_events(list_transcripts, as_location_output, complete_output)
+
+    as_location_output.close()
+    complete_output.close()
+    as_events_output.close()

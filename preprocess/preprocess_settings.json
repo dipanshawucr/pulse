@@ -2,7 +2,7 @@
   "REFERENCE_GENOME_DIRECTORY" : "/home/wonjunetai/Documents/KimLab/input/refGenome/Homo_sapiens.GRCh37.70.dna.chromosome.",
   "LIST_OF_TRANSCRIPTS": ["/home/wonjunetai/Documents/KimLab/input/for_preprocess/transcripts.gtf"],
   "FPKM_THRESHOLD" : 0.0,
-  "AS_LOCATION_OUTPUT_LOCATION": "",
-  "LOCATION_OF_COMPLETE_TRANSCRIPTS": "",
-  "LOCATION_OF_EVENTS": ""
+  "AS_LOCATION_OUTPUT_LOCATION": "/home/wonjunetai/Documents/KimLab/output/preprocess/",
+  "LOCATION_OF_COMPLETE_TRANSCRIPTS": "/home/wonjunetai/Documents/KimLab/output/preprocess/",
+  "LOCATION_OF_EVENTS": "/home/wonjunetai/Documents/KimLab/output/preprocess/"
 }
