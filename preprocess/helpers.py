@@ -63,6 +63,34 @@ def load_assembled_transcripts(filename, ref_genome):
     return list_transcripts
 
 
+def process_transcripts(list_of_transcript_files, dict_of_transcripts, fpkm_threshold):
+    """
+    For every transcript in list of transcripts, extract those transcripts that are unique and have
+    an FPKM equal to fpkm_threshold.
+
+    :param list_of_transcript_files:
+    :param fpkm_threshold:
+    :return:
+    """
+    dictionary_of_unique_transcripts = {}
+    for transcript_file in list_of_transcript_files:
+        list_transcripts = dict_of_transcripts[transcript_file]
+        for transcript in list_transcripts:
+            exon_ids = ''
+            for exon in transcript.exons:
+                exon_ids += str(exon.start) + '-' + str(exon.end) + '.'
+
+            transcript_unique_id = transcript.chromosome + '-' + exon_ids
+
+            if transcript_unique_id not in dictionary_of_unique_transcripts and transcript.fpkm == FPKM_THRESHOLD:
+                dictionary_of_unique_transcripts[transcript_unique_id] = transcript
+
+    print 'Number of transcripts over the threshold ', fpkm_threshold, ' and are distinct:'
+    print len(dictionary_of_unique_transcripts)
+    return {"list_transcripts": list_transcripts,
+            "dictionary_of_unique_transcripts": dictionary_of_unique_transcripts}
+
+
 def fetch_events(transcripts, aslocation, complete):
     events = []
 
@@ -124,3 +152,4 @@ def fetch_events(transcripts, aslocation, complete):
                                 print >> complete, transcript_j.nSeq()
                                 print >> complete, '>' + transcript_i.id
                                 print >> complete, transcript_i.nSeq()
+
