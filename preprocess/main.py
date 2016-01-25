@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
     # CREATE A DICTIONARY OF ALL UNIQUE TRANSCRIPTS
 
-    FPKM_THRESHOLD = float(normalize_unicode_data(preprocess_settings["FPKM_THRESHOLD"]))
+    FPKM_THRESHOLD = preprocess_settings["FPKM_THRESHOLD"]
 
     processed_transcripts = process_transcripts(list_of_transcript_files, dict_of_transcripts,
                                                 FPKM_THRESHOLD)

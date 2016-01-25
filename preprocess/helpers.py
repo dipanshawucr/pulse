@@ -82,7 +82,7 @@ def process_transcripts(list_of_transcript_files, dict_of_transcripts, fpkm_thre
 
             transcript_unique_id = transcript.chromosome + '-' + exon_ids
 
-            if transcript_unique_id not in dictionary_of_unique_transcripts and transcript.fpkm == FPKM_THRESHOLD:
+            if transcript_unique_id not in dictionary_of_unique_transcripts and transcript.fpkm == fpkm_threshold:
                 dictionary_of_unique_transcripts[transcript_unique_id] = transcript
 
     print 'Number of transcripts over the threshold ', fpkm_threshold, ' and are distinct:'
