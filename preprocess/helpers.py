@@ -117,7 +117,7 @@ def fetch_events(transcripts, aslocation, complete):
                             else:
                                 pass
 
-                        if c1 is None and c2 is None and c1[1].id == c2[0].id:
+                        if c1 is not None and c2 is not None and c1[1].id == c2[0].id:
                             event_id = c1[0].id + c1[1].id + c2[0].id + c2[1].id + exon_pairs_i[0].id + exon_pairs_i[
                                 1].id
                             if event_id not in events:
