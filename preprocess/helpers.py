@@ -82,7 +82,7 @@ def process_transcripts(list_of_transcript_files, dict_of_transcripts, fpkm_thre
 
             transcript_unique_id = transcript.chromosome + '-' + exon_ids
 
-            if transcript_unique_id not in dictionary_of_unique_transcripts and transcript.fpkm == FPKM_THRESHOLD:
+            if transcript_unique_id not in dictionary_of_unique_transcripts and transcript.fpkm == fpkm_threshold:
                 dictionary_of_unique_transcripts[transcript_unique_id] = transcript
 
     print 'Number of transcripts over the threshold ', fpkm_threshold, ' and are distinct:'
@@ -131,23 +131,23 @@ def fetch_events(transcripts, aslocation, complete):
                                     c1[1].length) + '=' + str(c2[1].length)
                                 print c1[0].nseq + c2[1].nseq
                                 print >> aslocation, transcript_j.chromosome.split('r')[-1] + '\t' + str(
-                                    c1[0].start) + '\t' + str(c1[
-                                                                  0].end) + '\t' + transcript_j.id + exclusion_intron + '\t' + 'C1' + '\t' + transcript_j.strand
+                                    c1[0].start) + '\t' + str(c1[0].end) + '\t' + transcript_j.id + exclusion_intron + \
+                                '\t' + 'C1' + '\t' + transcript_j.strand
                                 print >> aslocation, transcript_j.chromosome.split('r')[-1] + '\t' + str(
-                                    c1[1].start) + '\t' + str(c1[
-                                                                  1].end) + '\t' + transcript_j.id + exclusion_intron + '\t' + 'A' + '\t' + transcript_j.strand
+                                    c1[1].start) + '\t' + str(c1[1].end) + '\t' + transcript_j.id + exclusion_intron + \
+                                '\t' + 'A' + '\t' + transcript_j.strand
                                 print >> aslocation, transcript_j.chromosome.split('r')[-1] + '\t' + str(
-                                    c2[1].start) + '\t' + str(c2[
-                                                                  1].end) + '\t' + transcript_j.id + exclusion_intron + '\t' + 'C2' + '\t' + transcript_j.strand
+                                    c2[1].start) + '\t' + str(c2[1].end) + '\t' + transcript_j.id + exclusion_intron + \
+                                '\t' + 'C2' + '\t' + transcript_j.strand
                                 print >> aslocation, transcript_i.chromosome.split('r')[-1] + '\t' + str(
-                                    c1[0].start) + '\t' + str(c1[
-                                                                  0].end) + '\t' + transcript_i.id + exclusion_intron + '\t' + 'C1' + '\t' + transcript_i.strand
+                                    c1[0].start) + '\t' + str(c1[0].end) + '\t' + transcript_i.id + exclusion_intron + \
+                                '\t' + 'C1' + '\t' + transcript_i.strand
                                 print >> aslocation, transcript_i.chromosome.split('r')[-1] + '\t' + str(
-                                    c1[1].start) + '\t' + str(c1[
-                                                                  1].end) + '\t' + transcript_i.id + exclusion_intron + '\t' + 'A' + '\t' + transcript_i.strand
+                                    c1[1].start) + '\t' + str(c1[1].end) + '\t' + transcript_i.id + exclusion_intron + \
+                                '\t' + 'A' + '\t' + transcript_i.strand
                                 print >> aslocation, transcript_i.chromosome.split('r')[-1] + '\t' + str(
-                                    c2[1].start) + '\t' + str(c2[
-                                                                  1].end) + '\t' + transcript_i.id + exclusion_intron + '\t' + 'C2' + '\t' + transcript_i.strand
+                                    c2[1].start) + '\t' + str(c2[1].end) + '\t' + transcript_i.id + exclusion_intron + \
+                                '\t' + 'C2' + '\t' + transcript_i.strand
                                 print >> complete, '>' + transcript_j.id
                                 print >> complete, transcript_j.nSeq()
                                 print >> complete, '>' + transcript_i.id
