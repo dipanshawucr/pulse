@@ -27,11 +27,13 @@ def run_samtools(cell_line_for_samtools):
     subprocess.Popen(command3, stdin=p2.stdout, stdout=output_file)
 
 
-def run_cufflinks(no_rg_cell_line):
-    print "Processing cell line: " + no_rg_cell_line
-    output = "./output/transcripts" + no_rg_cell_line
-    call("cufflinks", "-o", output, "-g",
-         "./input/Homo_sapiens.GRCh37.70.gtf", "")
+def run_cufflinks(cell_line_name):
+    print "Processing cell line: " + cell_line_name
+    output_file = open(PULSE_PATH + '/output/for_preprocess/' + cell_line_name + '/transcript.gtf', 'w')
+    command1 = ['cufflinks', '-o', PULSE_PATH + '/output/for_preprocess/cufflinks_output/' + cell_line_name, '-g',
+                PULSE_PATH + '/input/Homo_sapeins.GRCh37.70.gtf', PULSE_PATH + '/output/for_preprocess/' +
+                cell_line_name + '/no-rg/' + cell_line_name]
+    subprocess.Popen(command1, stdout=output_file)
 
 
 if __name__ == "__main__":
@@ -39,3 +41,4 @@ if __name__ == "__main__":
     for cell_line in all_cell_lines:
         print "Running samtools for: " + cell_line
         run_samtools(cell_line)
+        run_cufflinks(cell_line)
