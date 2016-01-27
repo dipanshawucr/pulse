@@ -96,7 +96,9 @@ if __name__ == "__main__":
 
     for TSS_id, list_transcripts in dict_group_transcripts.iteritems():
         if len(list_transcripts) > 1:
-            print >> as_events_output, fetch_events(list_transcripts, as_location_output, complete_output)
+            print >> as_events_output, fetch_events(list_transcripts,
+                                                    as_location_output,
+                                                    complete_output)
 
     as_location_output.close()
     complete_output.close()
