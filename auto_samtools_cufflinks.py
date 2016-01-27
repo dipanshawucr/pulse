@@ -1,5 +1,7 @@
 import os
-from subprocess import call
+import subprocess
+
+PULSE_PATH = os.getcwd()
 
 
 def run_samtools(cell_line_for_samtools):
@@ -10,11 +12,19 @@ def run_samtools(cell_line_for_samtools):
     for path in paths_to_create:
         if not os.path.exists(path):
             os.makedirs(path)
-    command = "samtools view -h ./input/cell_lines/" + cell_line_for_samtools + \
-              " | grep -v @RG " + "| samtools view -Sbh - > ./output/for_preprocess/" + \
-              cell_line_for_samtools + "/no-rg"
-    print("Running: " + command)
-    call(command)
+
+    command1 = ['samtools', 'view', '-h', PULSE_PATH + '/input/cell_lines/' + cell_line_for_samtools]
+    command2 = ['grep',  '-v', '@RG']
+    command3 = ['samtools', 'view', '-Sbh', '-']
+    output_file = open(PULSE_PATH + '/output/for_preprocess/' +
+                       cell_line_for_samtools + '/no-rg/' + cell_line_for_samtools, "w")
+
+    print "Running: view"
+    p1 = subprocess.Popen(command1, stdout=subprocess.PIPE)
+    print "Running: grep"
+    p2 = subprocess.Popen(command2, stdin=p1.stdout, stdout=subprocess.PIPE)
+    print "Running view2"
+    subprocess.Popen(command3, stdin=p2.stdout, stdout=output_file)
 
 
 def run_cufflinks(no_rg_cell_line):
@@ -29,4 +39,3 @@ if __name__ == "__main__":
     for cell_line in all_cell_lines:
         print "Running samtools for: " + cell_line
         run_samtools(cell_line)
-
