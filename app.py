@@ -20,8 +20,8 @@ except KeyError:
 PREPROCESS_SETTINGS = json.load(open('./preprocess/preprocess_settings.json', 'r'))
 
 if __name__ == "__main__":
-    # all_cell_lines = os.listdir("./input/cell_lines")
-    #
+    all_cell_lines = os.listdir("./input/cell_lines")
+
     # # First run samtools and cufflinks for all cell lines
     # for cell_line in all_cell_lines:
     #     for_preprocess.create_paths_for_cell_line(cell_line)
@@ -38,6 +38,7 @@ if __name__ == "__main__":
     proceed_to_preprocessing = raw_input("Press Y to proceed to preprocessing: \n")
 
     if proceed_to_preprocessing == 'Y':
+
         # Uncomment below to load and pickle reference genome.
         # print "LOADING AND PICKLING REFERENCE GENOME."
         # load_and_pickle_reference_genome(PULSE_PATH, PREPROCESS_SETTINGS)
@@ -69,55 +70,45 @@ if __name__ == "__main__":
 
             FPKM_THRESHOLD = PREPROCESS_SETTINGS["FPKM_THRESHOLD"]
 
-            # processed_transcripts = preprocess_helpers.process_transcripts(
-            #     list_of_transcript_files,
-            #     dict_of_transcripts,
-            #     FPKM_THRESHOLD
-            # )
-            #
-            # dictionary_of_unique_transcripts = processed_transcripts["dictionary_of_unique_transcripts"]
-            # list_transcripts = processed_transcripts["list_transcripts"]
+            processed_transcripts = preprocess_helpers.process_transcripts(
+                cell_line,
+                dict_of_transcripts,
+                FPKM_THRESHOLD
+            )
 
-            #
-            # # group the transcript to find the alternative events
-            #
-            # # I used to group by gene_id, but this become problematic
-            # # when I take data from different readings (use diff id for
-            # # the same transcripts when no reference gene was found)
-            # # then use TSS to group (transcript start splicing)
-            #
-            # dict_group_transcripts = {}
-            #
-            # # for the Novel isoforms, the gene id is not consistent, then I will group
-            # # isoforms for chromosome and TSS (transcript start site)
-            #
-            # for transcript in dictionary_of_unique_transcripts.itervalues():
-            #     # TSS id
-            #     TSS_id = '-' + transcript.chromosome + '-' + str(transcript.exons[0].start)
-            #     # if not dict_group_transcripts.has_key(transcript.gene_id):
-            #     if TSS_id not in dict_group_transcripts:
-            #         dict_group_transcripts[TSS_id] = [transcript]
-            #     else:
-            #         dict_group_transcripts[TSS_id].append(transcript)
-            #
-            # # extract each transcript of this gene
-            #
-            # as_location_output = open(normalize_unicode_data(PREPROCESS_SETTINGS["AS_LOCATION_OUTPUT_LOCATION"]) +
-            #                   'ASlocation.out', 'w')
-            # complete_output = open(normalize_unicode_data(PREPROCESS_SETTINGS["LOCATION_OF_COMPLETE_TRANSCRIPTS"]) +
-            #                        'complete_transcripts.fasta', 'w')
-            # as_events_output = open(normalize_unicode_data(PREPROCESS_SETTINGS["LOCATION_OF_EVENTS"]) +
-            #                         'events.fa', 'w')
-            #
-            # for TSS_id, list_transcripts in dict_group_transcripts.iteritems():
-            #     if len(list_transcripts) > 1:
-            #         print >> as_events_output, fetch_events(list_transcripts,
-            #                                                 as_location_output,
-            #                                                 complete_output)
-            #
-            # as_location_output.close()
-            # complete_output.close()
-            # as_events_output.close()
+            dictionary_of_unique_transcripts = processed_transcripts["dictionary_of_unique_transcripts"]
+            list_transcripts = processed_transcripts["list_transcripts"]
+
+            # USE TSS to group
+
+            dict_group_transcripts = {}
+
+            for transcript in dictionary_of_unique_transcripts.itervalues():
+                # TSS id
+                TSS_id = '-' + transcript.chromosome + '-' + str(transcript.exons[0].start)
+                # if not dict_group_transcripts.has_key(transcript.gene_id):
+                if TSS_id not in dict_group_transcripts:
+                    dict_group_transcripts[TSS_id] = [transcript]
+                else:
+                    dict_group_transcripts[TSS_id].append(transcript)
+
+            as_location_output = open(PULSE_PATH + '/output/preprocess/' + cell_line + '/ASlocation.out', 'w')
+            complete_output = open(PULSE_PATH + '/output/preprocess/' + cell_line + '/complete_transcripts.fasta', 'w')
+            as_events_output = open(PULSE_PATH + '/output/preprocess/' + cell_line + '/events.fa', 'w')
+
+            for TSS_id, list_transcripts in dict_group_transcripts.iteritems():
+                if len(list_transcripts) > 1:
+                    print >> as_events_output, preprocess_helpers.fetch_events(list_transcripts,
+                                                                               as_location_output,
+                                                                               complete_output)
+
+            as_location_output.close()
+            complete_output.close()
+            as_events_output.close()
+
+            # filter map
+
+            # generate index
     else:
         print "Invalid input. Quitting..."
         quit()

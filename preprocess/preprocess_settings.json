@@ -1,7 +1,4 @@
 {
   "REFERENCE_GENOME_DIRECTORY" : "/home/wonjunetai/Documents/KimLab/input/refGenome/Homo_sapiens.GRCh37.70.dna.chromosome.",
-  "FPKM_THRESHOLD" : 0.0,
-  "AS_LOCATION_OUTPUT_LOCATION": "/home/wonjunetai/Documents/KimLab/pulse/output/preprocess/",
-  "LOCATION_OF_COMPLETE_TRANSCRIPTS": "/home/wonjunetai/Documents/KimLab/pulse/output/preprocess/",
-  "LOCATION_OF_EVENTS": "/home/wonjunetai/Documents/KimLab/pulse/output/preprocess/"
+  "FPKM_THRESHOLD" : 0.0
 }

@@ -3,6 +3,10 @@
 import os
 
 
+# TODO: Download the reference genome using an API and insert into pulse/input/
+# TODO: Check for dependencies like samtools and cufflinks and blast, and install if necessary
+
+
 def setup_for_samtools_and_cufflinks():
     paths_to_create = [r'./input/cell_lines', r'./output/for_preprocess']
     for path in paths_to_create:

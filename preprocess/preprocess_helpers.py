@@ -83,27 +83,27 @@ def load_assembled_transcripts(filename, ref_genome):
     return list_transcripts
 
 
-def process_transcripts(list_of_transcript_files, dict_of_transcripts, fpkm_threshold):
+def process_transcripts(transcript_file, dict_of_transcripts, fpkm_threshold):
     """
     For every transcript in list of transcripts, extract those transcripts that are unique and have
     an FPKM equal to fpkm_threshold.
 
-    :param list_of_transcript_files:
+    :param transcript_file:
+    :param dict_of_transcripts:
     :param fpkm_threshold:
     :return:
     """
     dictionary_of_unique_transcripts = {}
-    for transcript_file in list_of_transcript_files:
-        list_transcripts = dict_of_transcripts[transcript_file]
-        for transcript in list_transcripts:
-            exon_ids = ''
-            for exon in transcript.exons:
-                exon_ids += str(exon.start) + '-' + str(exon.end) + '.'
+    list_transcripts = dict_of_transcripts[transcript_file]
+    for transcript in list_transcripts:
+        exon_ids = ''
+        for exon in transcript.exons:
+            exon_ids += str(exon.start) + '-' + str(exon.end) + '.'
 
-            transcript_unique_id = transcript.chromosome + '-' + exon_ids
+        transcript_unique_id = transcript.chromosome + '-' + exon_ids
 
-            if transcript_unique_id not in dictionary_of_unique_transcripts and transcript.fpkm == fpkm_threshold:
-                dictionary_of_unique_transcripts[transcript_unique_id] = transcript
+        if transcript_unique_id not in dictionary_of_unique_transcripts and transcript.fpkm == fpkm_threshold:
+            dictionary_of_unique_transcripts[transcript_unique_id] = transcript
 
     print 'Number of transcripts over the threshold ', fpkm_threshold, ' and are distinct:'
     print len(dictionary_of_unique_transcripts)
@@ -169,7 +169,7 @@ def fetch_events(transcripts, aslocation, complete):
                                     c2[1].start) + '\t' + str(c2[1].end) + '\t' + transcript_i.id + exclusion_intron + \
                                 '\t' + 'C2' + '\t' + transcript_i.strand
                                 print >> complete, '>' + transcript_j.id
-                                print >> complete, transcript_j.nSeq()
+                                print >> complete, transcript_j.n_seq()
                                 print >> complete, '>' + transcript_i.id
-                                print >> complete, transcript_i.nSeq()
+                                print >> complete, transcript_i.n_seq()
 
