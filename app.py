@@ -17,10 +17,13 @@ except KeyError:
     print 'Using working directory'
     PULSE_PATH = os.getcwd()
 
-PREPROCESS_SETTINGS = json.load(open('./preprocess/preprocess_settings.json', 'r'))
+PREPROCESS_SETTINGS = json.load(open(PULSE_PATH + '/preprocess/preprocess_settings.json', 'r'))
 
 if __name__ == "__main__":
-    all_cell_lines = os.listdir("./input/cell_lines")
+    all_cell_lines = os.listdir(PULSE_PATH + "/input/cell_lines")
+
+    ##########################################################################
+    # SAMTOOLS AND CUFFLINKS
 
     # # First run samtools and cufflinks for all cell lines
     # for cell_line in all_cell_lines:
@@ -34,6 +37,8 @@ if __name__ == "__main__":
     #     print "Finished cufflinks for: " + cell_line
     #
     # print "Finished cufflinks and samtools for all cell lines: " + str(all_cell_lines)
+
+    ##########################################################################
 
     proceed_to_preprocessing = raw_input("Press Y to proceed to preprocessing: \n")
 
@@ -51,7 +56,7 @@ if __name__ == "__main__":
 
         ##########################################################################
 
-        all_cell_lines_for_preprocess = os.listdir('./output/for_preprocess')
+        all_cell_lines_for_preprocess = os.listdir(PULSE_PATH + '/output/for_preprocess')
 
         # Preprocessing: extract AS events, filter map, then generate indices
         for cell_line in all_cell_lines_for_preprocess:
@@ -59,11 +64,15 @@ if __name__ == "__main__":
             print "Preprocessing paths created for: " + cell_line
             print "Beginning alternative splicing extraction step for: " + cell_line
             print "Loading assembled transcripts... \n"
-            transcript_file_location = './output/for_preprocess/' + cell_line + '/cufflinks_output/transcripts.gtf'
+            transcript_file_location = PULSE_PATH + '/output/for_preprocess/' + cell_line + \
+                                       '/cufflinks_output/transcripts.gtf'
 
             dict_of_transcripts = dict()
-            dict_of_transcripts[cell_line] = preprocess_helpers.load_assembled_transcripts(transcript_file_location,
-                                                                                           ref_genome)
+
+            dict_of_transcripts[cell_line] = \
+                preprocess_helpers.load_assembled_transcripts(transcript_file_location,
+                                                              ref_genome)
+
             print "Assembled transcripts for " + cell_line + " loaded!\n"
 
             ##########################################################################
@@ -83,7 +92,7 @@ if __name__ == "__main__":
 
             ##########################################################################
 
-            # USE TSS to group
+            # USE TSS to group and fetch all AS events
 
             dict_group_transcripts = {}
 
@@ -96,16 +105,21 @@ if __name__ == "__main__":
                 else:
                     dict_group_transcripts[TSS_id].append(transcript)
 
-            as_location_output = open(PULSE_PATH + '/output/preprocess/' + cell_line + '/ASlocation.out', 'w')
-            complete_output = open(PULSE_PATH + '/output/preprocess/' + cell_line + '/complete_transcripts.fasta', 'w')
-            as_events_output = open(PULSE_PATH + '/output/preprocess/' + cell_line + '/events.fa', 'w')
+            as_location_output = open(PULSE_PATH + '/output/preprocess/' +
+                                      cell_line + '/ASlocation.out', 'w')
+            complete_output = open(PULSE_PATH + '/output/preprocess/' +
+                                   cell_line + '/complete_transcripts.fasta', 'w')
+            as_events_output = open(PULSE_PATH + '/output/preprocess/' +
+                                    cell_line + '/events.fa', 'w')
 
+            print "Fetching all exclusion/inclusion events... \n"
             for TSS_id, list_transcripts in dict_group_transcripts.iteritems():
                 if len(list_transcripts) > 1:
-                    print >> as_events_output, preprocess_helpers.fetch_events(list_transcripts,
-                                                                               as_location_output,
-                                                                               complete_output,
-                                                                               as_events_output)
+                    print >> as_events_output, \
+                        preprocess_helpers.fetch_events(list_transcripts,
+                                                        as_location_output,
+                                                        complete_output,
+                                                        as_events_output)
 
             as_location_output.close()
             complete_output.close()
@@ -114,7 +128,10 @@ if __name__ == "__main__":
             ##########################################################################
 
             # BLAST
-            # blast.blast_events()
+            uniprot_file_location = PREPROCESS_SETTINGS["UNIPROT_FILE_LOCATION"]
+            events_file_location = PULSE_PATH + '/output/preprocess/' + cell_line + '/events.fa'
+            output_location = PULSE_PATH + '/output/preprocess/' + cell_line + '/blastx_from_AS_events.out'
+            blast.blast_events(uniprot_file_location, events_file_location, output_location)
 
             ##########################################################################
 
