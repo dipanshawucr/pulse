@@ -2,7 +2,7 @@
 
 import os
 
-
+# TODO: Download the uniprot using API and insert into pulse/input
 # TODO: Download the reference genome using an API and insert into pulse/input/
 # TODO: Check for dependencies like samtools and cufflinks and blast, and install if necessary
 

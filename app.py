@@ -6,7 +6,7 @@ import pickle
 
 from for_preprocess import for_preprocess, cufflinks, samtools
 
-from preprocess import preprocess_helpers
+from preprocess import preprocess_helpers, blast
 from preprocess.reference_genome import load_and_pickle_reference_genome, load_pickled_reference_genome
 
 
@@ -59,12 +59,14 @@ if __name__ == "__main__":
             print "Preprocessing paths created for: " + cell_line
             print "Beginning alternative splicing extraction step for: " + cell_line
             print "Loading assembled transcripts... \n"
-            transcript_file_location = './output/for_preprocess/' + cell_line + 'cufflinks_output/transcripts.gtf'
+            transcript_file_location = './output/for_preprocess/' + cell_line + '/cufflinks_output/transcripts.gtf'
 
             dict_of_transcripts = dict()
             dict_of_transcripts[cell_line] = preprocess_helpers.load_assembled_transcripts(transcript_file_location,
                                                                                            ref_genome)
             print "Assembled transcripts for " + cell_line + " loaded!\n"
+
+            ##########################################################################
 
             # CREATE A DICTIONARY OF ALL UNIQUE TRANSCRIPTS
 
@@ -78,6 +80,8 @@ if __name__ == "__main__":
 
             dictionary_of_unique_transcripts = processed_transcripts["dictionary_of_unique_transcripts"]
             list_transcripts = processed_transcripts["list_transcripts"]
+
+            ##########################################################################
 
             # USE TSS to group
 
@@ -100,15 +104,27 @@ if __name__ == "__main__":
                 if len(list_transcripts) > 1:
                     print >> as_events_output, preprocess_helpers.fetch_events(list_transcripts,
                                                                                as_location_output,
-                                                                               complete_output)
+                                                                               complete_output,
+                                                                               as_events_output)
 
             as_location_output.close()
             complete_output.close()
             as_events_output.close()
 
+            ##########################################################################
+
+            # BLAST
+            # blast.blast_events()
+
+            ##########################################################################
+
             # filter map
 
+            ##########################################################################
+
             # generate index
+
+            ##########################################################################
     else:
         print "Invalid input. Quitting..."
         quit()
