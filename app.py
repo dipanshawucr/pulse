@@ -7,7 +7,7 @@ import pickle
 from for_preprocess import for_preprocess, cufflinks, samtools
 
 from preprocess import preprocess_helpers
-from preprocess.reference_genome import ReferenceGenome, load_and_pickle_reference_genome, load_pickled_reference_genome
+from preprocess.reference_genome import load_and_pickle_reference_genome, load_pickled_reference_genome
 
 
 try:
@@ -38,16 +38,14 @@ if __name__ == "__main__":
     proceed_to_preprocessing = raw_input("Press Y to proceed to preprocessing: \n")
 
     if proceed_to_preprocessing == 'Y':
-        ##########################################################################
-
-        # Uncomment to load and pickle reference genome.
-        print "LOADING AND PICKLING REFERENCE GENOME."
-        load_and_pickle_reference_genome(PULSE_PATH, PREPROCESS_SETTINGS)
-        print "SUCCESSFULLY PICKLED REFERENCE GENOME!"
+        # Uncomment below to load and pickle reference genome.
+        # print "LOADING AND PICKLING REFERENCE GENOME."
+        # load_and_pickle_reference_genome(PULSE_PATH, PREPROCESS_SETTINGS)
+        # print "SUCCESSFULLY PICKLED REFERENCE GENOME!"
 
         # LOAD PICKLED REFERENCE GENOME
-        print "LOADING PICKLED REFERENCE GENOME (happens once only for all cell lines)..."
-        refGenome = load_pickled_reference_genome(PULSE_PATH)
+        print "LOADING PICKLED REFERENCE GENOME (happens only once for all cell lines)..."
+        ref_genome = load_pickled_reference_genome(PULSE_PATH)
         print "PICKLED REFERENCE GENOME LOADED!"
 
         ##########################################################################
@@ -63,14 +61,14 @@ if __name__ == "__main__":
             transcript_file_location = './output/for_preprocess/' + cell_line + '/transcripts.gtf'
 
             dict_of_transcripts = dict()
-            dict_of_transcripts[cell_line] = preprocess_helpers.load_assembled_transcripts(transcript_file_location, ref_genome)
+            dict_of_transcripts[cell_line] = preprocess_helpers.load_assembled_transcripts(transcript_file_location,
+                                                                                           ref_genome)
             print "Assembled transcripts for " + cell_line + " loaded!\n"
 
-            print dict_of_transcripts[cell_line]
             # CREATE A DICTIONARY OF ALL UNIQUE TRANSCRIPTS
 
-            # FPKM_THRESHOLD = PREPROCESS_SETTINGS["FPKM_THRESHOLD"]
-            #
+            FPKM_THRESHOLD = PREPROCESS_SETTINGS["FPKM_THRESHOLD"]
+
             # processed_transcripts = preprocess_helpers.process_transcripts(
             #     list_of_transcript_files,
             #     dict_of_transcripts,
