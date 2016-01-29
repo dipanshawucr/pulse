@@ -1,5 +1,25 @@
 import unicodedata
+import os
 from transcript import Transcript
+
+
+def create_paths_for_transcript(pulse_path, transcript):
+    """
+    Creates all necessary paths for preprocess:
+
+    Base folder for cell line:
+    - ../output/preprocess/<CELL_LINE_NAME>/
+
+    :param transcript:
+    :param pulse_path:
+    :return:
+    """
+
+    paths_to_create = [pulse_path + r'/output/preprocess/' + transcript]
+    for path in paths_to_create:
+        print path
+        if not os.path.exists(path):
+            os.makedirs(path)
 
 
 def normalize_unicode_data(data):
