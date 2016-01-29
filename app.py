@@ -3,12 +3,9 @@ import os
 import sys
 import json
 import pickle
-
 from for_preprocess import for_preprocess, cufflinks, samtools
-
 from preprocess import preprocess_helpers, blast
 from preprocess.reference_genome import load_and_pickle_reference_genome, load_pickled_reference_genome
-
 
 try:
     PULSE_PATH = os.environ['PULSE_PATH']
@@ -58,13 +55,19 @@ if __name__ == "__main__":
 
         all_cell_lines_for_preprocess = os.listdir(PULSE_PATH + '/output/for_preprocess')
 
-        # Preprocessing: extract AS events, filter map, then generate indices
+        # PREPROCESSING: extract AS events, filter map, then generate indices
+
         for cell_line in all_cell_lines_for_preprocess:
+
+            ##########################################################################
+            PREPROCESS_OUTPUT_PATH = PULSE_PATH + '/output/preprocess/' + cell_line
+            ##########################################################################
+
             preprocess_helpers.create_paths_for_transcript(PULSE_PATH, cell_line)
             print "Preprocessing paths created for: " + cell_line
             print "Beginning alternative splicing extraction step for: " + cell_line
             print "Loading assembled transcripts... \n"
-            transcript_file_location = PULSE_PATH + '/output/for_preprocess/' + cell_line + \
+            transcript_file_location = PREPROCESS_OUTPUT_PATH = PULSE_PATH + '/output/preprocess/' + cell_line + \
                                        '/cufflinks_output/transcripts.gtf'
 
             dict_of_transcripts = dict()
@@ -105,12 +108,9 @@ if __name__ == "__main__":
                 else:
                     dict_group_transcripts[TSS_id].append(transcript)
 
-            as_location_output = open(PULSE_PATH + '/output/preprocess/' +
-                                      cell_line + '/ASlocation.out', 'w')
-            complete_output = open(PULSE_PATH + '/output/preprocess/' +
-                                   cell_line + '/complete_transcripts.fasta', 'w')
-            as_events_output = open(PULSE_PATH + '/output/preprocess/' +
-                                    cell_line + '/events.fa', 'w')
+            as_location_output = open(PREPROCESS_OUTPUT_PATH + '/ASlocation.out', 'w')
+            complete_output = open(PREPROCESS_OUTPUT_PATH + '/complete_transcripts.fasta', 'w')
+            as_events_output = open(PREPROCESS_OUTPUT_PATH + '/events.fa', 'w')
 
             print "Fetching all exclusion/inclusion events... \n"
             for TSS_id, list_transcripts in dict_group_transcripts.iteritems():
@@ -131,11 +131,13 @@ if __name__ == "__main__":
             uniprot_file_location = PREPROCESS_SETTINGS["UNIPROT_FILE_LOCATION"]
             events_file_location = PULSE_PATH + '/output/preprocess/' + cell_line + '/events.fa'
             output_location = PULSE_PATH + '/output/preprocess/' + cell_line + '/blastx_from_AS_events.out'
+
             blast.blast_events(uniprot_file_location, events_file_location, output_location)
 
             ##########################################################################
 
             # filter map
+
 
             ##########################################################################
 
@@ -148,6 +150,6 @@ if __name__ == "__main__":
 
 
 
-            # Feature extraction
+        # Feature extraction
 
-            # Machine learning
+        # Machine learning
