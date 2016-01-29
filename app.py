@@ -4,7 +4,7 @@ import sys
 import json
 import pickle
 from for_preprocess import for_preprocess, cufflinks, samtools
-from preprocess import preprocess_helpers, blast
+from preprocess import preprocess_helpers, blast, filtermap
 from preprocess.reference_genome import load_and_pickle_reference_genome, load_pickled_reference_genome
 
 try:
@@ -132,12 +132,28 @@ if __name__ == "__main__":
             events_file_location = PULSE_PATH + '/output/preprocess/' + cell_line + '/events.fa'
             output_location = PULSE_PATH + '/output/preprocess/' + cell_line + '/blastx_from_AS_events.out'
 
+            print "Now blasting the events.fa file from: " + cell_line + "\n"
+
             blast.blast_events(uniprot_file_location, events_file_location, output_location)
 
             ##########################################################################
 
-            # filter map
+            # Generate mapping between uniprot to splicing events with filter map
+            blast_file = output_location
+            readFrom = open(blast_file, 'r')
+            uniprot_fasta = uniprot_file_location
+            isoform_fasta = PREPROCESS_OUTPUT_PATH + '/complete_transcripts.fasta'
 
+            os.makedirs(PREPROCESS_OUTPUT_PATH + '/temp')
+            filtermap_not_len_collapsed_output = open(PREPROCESS_OUTPUT_PATH +
+                                                      '/temp/rnaseq_huniprot_corrected_len.txt', 'w')
+
+            filtermap_len_collapsed_output = open(PREPROCESS_OUTPUT_PATH +
+                                                  '/temp/rnaseq_huniprot_corrected_len_collapsed.txt', 'w')
+
+            filtermap.filter_map1(blast_file, uniprot_fasta, isoform_fasta, filtermap_not_len_collapsed_output)
+            filtermap.filter_map2(uniprot_fasta, isoform_fasta, filtermap_not_len_collapsed_output,
+                                 filtermap_len_collapsed_output)
 
             ##########################################################################
 
