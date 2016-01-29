@@ -59,7 +59,7 @@ if __name__ == "__main__":
             print "Preprocessing paths created for: " + cell_line
             print "Beginning alternative splicing extraction step for: " + cell_line
             print "Loading assembled transcripts... \n"
-            transcript_file_location = './output/for_preprocess/' + cell_line + '/transcripts.gtf'
+            transcript_file_location = './output/for_preprocess/' + cell_line + 'cufflinks_output/transcripts.gtf'
 
             dict_of_transcripts = dict()
             dict_of_transcripts[cell_line] = preprocess_helpers.load_assembled_transcripts(transcript_file_location,
