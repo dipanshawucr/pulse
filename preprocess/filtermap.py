@@ -1,6 +1,6 @@
 def pbegend(pstart, pend, plength):
-    phend = (pend + threshold / 3 > plength)
-    phbeg = (pstart - threshold / 3 < 1)
+    phend = (pend + THRESHOLD / 3 > plength)
+    phbeg = (pstart - THRESHOLD / 3 < 1)
 
     return [phbeg, phend]
 
@@ -10,19 +10,17 @@ def mbegend(nstart, nend, nlength, backwards):
         temp = nstart
         nstart = nend
         nend = temp
-    mhend = (nend + threshold > nlength)
-    mhbeg = (nstart - threshold < 1)
+    mhend = (nend + THRESHOLD > nlength)
+    mhbeg = (nstart - THRESHOLD < 1)
 
     return [mhbeg, mhend]
 
-
 # CONSTANTS
 # TODO: Move these to preprocess_settings.json
-threshold = 9  # nucleotides
-pidentThreshold = 95.0
-ignoreExclusion = False
-dealWithNucleotide = False
-lineNumber = 0
+THRESHOLD = 9  # nucleotides
+PINDENT_THRESHOLD = 95.0
+IGNORE_EXCLUSION = False
+DEAL_WITH_NUCLEOTIDE = False
 
 
 def filter_map1(blast_file, uniprot_fasta, isoform_fasta, rna_seq_output):
@@ -51,7 +49,7 @@ def filter_map1(blast_file, uniprot_fasta, isoform_fasta, rna_seq_output):
         p_end = int(subject_end)  # /3.0
         p_length = int(aln_length)  # /3.0
 
-        if dealWithNucleotide:
+        if DEAL_WITH_NUCLEOTIDE:
             p_start /= 3.0
             p_end /= 3.0
             p_length /= 3.0
@@ -63,7 +61,7 @@ def filter_map1(blast_file, uniprot_fasta, isoform_fasta, rna_seq_output):
         pident = float(perc_identity)
 
         if query_id[0] == "E":
-            if ignoreExclusion:
+            if IGNORE_EXCLUSION:
                 continue
             nlength -= nucleotide_lengths[1]
 
@@ -103,11 +101,11 @@ def filter_map1(blast_file, uniprot_fasta, isoform_fasta, rna_seq_output):
                 hit_length *= -1
                 hit_length += 2
 
-            if ((hit_length + threshold) / 3 < p_end - p_start + 1) or ((hit_length - threshold) / 3 > p_end - p_start + 1):
+            if ((hit_length + THRESHOLD) / 3 < p_end - p_start + 1) or ((hit_length - THRESHOLD) / 3 > p_end - p_start + 1):
                 to_print = False
                 print line.strip() + " missing_chunks"
 
-        if pident < pidentThreshold:
+        if pident < PINDENT_THRESHOLD:
             to_print = False
             print line.strip() + " pident_failure"
 

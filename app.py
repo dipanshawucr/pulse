@@ -18,10 +18,8 @@ PREPROCESS_SETTINGS = json.load(open(PULSE_PATH + '/preprocess/preprocess_settin
 
 if __name__ == "__main__":
     all_cell_lines = os.listdir(PULSE_PATH + "/input/cell_lines")
-
     ##########################################################################
     # SAMTOOLS AND CUFFLINKS
-
     # # First run samtools and cufflinks for all cell lines
     # for cell_line in all_cell_lines:
     #     for_preprocess.create_paths_for_cell_line(cell_line)
@@ -34,138 +32,117 @@ if __name__ == "__main__":
     #     print "Finished cufflinks for: " + cell_line
     #
     # print "Finished cufflinks and samtools for all cell lines: " + str(all_cell_lines)
-
     ##########################################################################
 
     proceed_to_preprocessing = raw_input("Press Y to proceed to preprocessing: \n")
 
     if proceed_to_preprocessing == 'Y':
-
         # Uncomment below to load and pickle reference genome.
         # print "LOADING AND PICKLING REFERENCE GENOME."
         # load_and_pickle_reference_genome(PULSE_PATH, PREPROCESS_SETTINGS)
         # print "SUCCESSFULLY PICKLED REFERENCE GENOME!"
 
         # LOAD PICKLED REFERENCE GENOME
-        print "LOADING PICKLED REFERENCE GENOME (happens only once for all cell lines)..."
-        ref_genome = load_pickled_reference_genome(PULSE_PATH)
-        print "PICKLED REFERENCE GENOME LOADED!"
+
+        # print "LOADING PICKLED REFERENCE GENOME (happens only once for all cell lines)..."
+        # ref_genome = load_pickled_reference_genome(PULSE_PATH)
+        # print "PICKLED REFERENCE GENOME LOADED!"
 
         ##########################################################################
-
         all_cell_lines_for_preprocess = os.listdir(PULSE_PATH + '/output/for_preprocess')
 
         # PREPROCESSING: extract AS events, filter map, then generate indices
-
         for cell_line in all_cell_lines_for_preprocess:
-
             ##########################################################################
             PREPROCESS_OUTPUT_PATH = PULSE_PATH + '/output/preprocess/' + cell_line
             ##########################################################################
 
-            preprocess_helpers.create_paths_for_transcript(PULSE_PATH, cell_line)
-            print "Preprocessing paths created for: " + cell_line
-            print "Beginning alternative splicing extraction step for: " + cell_line
-            print "Loading assembled transcripts... \n"
-            transcript_file_location = PREPROCESS_OUTPUT_PATH = PULSE_PATH + '/output/preprocess/' + cell_line + \
-                                       '/cufflinks_output/transcripts.gtf'
-
-            dict_of_transcripts = dict()
-
-            dict_of_transcripts[cell_line] = \
-                preprocess_helpers.load_assembled_transcripts(transcript_file_location,
-                                                              ref_genome)
-
-            print "Assembled transcripts for " + cell_line + " loaded!\n"
-
-            ##########################################################################
-
-            # CREATE A DICTIONARY OF ALL UNIQUE TRANSCRIPTS
-
-            FPKM_THRESHOLD = PREPROCESS_SETTINGS["FPKM_THRESHOLD"]
-
-            processed_transcripts = preprocess_helpers.process_transcripts(
-                cell_line,
-                dict_of_transcripts,
-                FPKM_THRESHOLD
-            )
-
-            dictionary_of_unique_transcripts = processed_transcripts["dictionary_of_unique_transcripts"]
-            list_transcripts = processed_transcripts["list_transcripts"]
-
-            ##########################################################################
-
-            # USE TSS to group and fetch all AS events
-
-            dict_group_transcripts = {}
-
-            for transcript in dictionary_of_unique_transcripts.itervalues():
-                # TSS id
-                TSS_id = '-' + transcript.chromosome + '-' + str(transcript.exons[0].start)
-                # if not dict_group_transcripts.has_key(transcript.gene_id):
-                if TSS_id not in dict_group_transcripts:
-                    dict_group_transcripts[TSS_id] = [transcript]
-                else:
-                    dict_group_transcripts[TSS_id].append(transcript)
-
-            as_location_output = open(PREPROCESS_OUTPUT_PATH + '/ASlocation.out', 'w')
-            complete_output = open(PREPROCESS_OUTPUT_PATH + '/complete_transcripts.fasta', 'w')
-            as_events_output = open(PREPROCESS_OUTPUT_PATH + '/events.fa', 'w')
-
-            print "Fetching all exclusion/inclusion events... \n"
-            for TSS_id, list_transcripts in dict_group_transcripts.iteritems():
-                if len(list_transcripts) > 1:
-                    print >> as_events_output, \
-                        preprocess_helpers.fetch_events(list_transcripts,
-                                                        as_location_output,
-                                                        complete_output,
-                                                        as_events_output)
-
-            as_location_output.close()
-            complete_output.close()
-            as_events_output.close()
+            # preprocess_helpers.create_paths_for_transcript(PULSE_PATH, cell_line)
+            # print "Preprocessing paths created for: " + cell_line
+            # print "Beginning alternative splicing extraction step for: " + cell_line
+            # print "Loading assembled transcripts... \n"
+            # transcript_file_location = PULSE_PATH + '/output/for_preprocess/' + cell_line + \
+            #                            '/cufflinks_output/transcripts.gtf'
+            # dict_of_transcripts = dict()
+            # dict_of_transcripts[cell_line] = \
+            #     preprocess_helpers.load_assembled_transcripts(transcript_file_location,
+            #                                                   ref_genome)
+            # print "Assembled transcripts for " + cell_line + " loaded!\n"
+            # ##########################################################################
+            # # CREATE A DICTIONARY OF ALL UNIQUE TRANSCRIPTS
+            # FPKM_THRESHOLD = PREPROCESS_SETTINGS["FPKM_THRESHOLD"]
+            # processed_transcripts = preprocess_helpers.process_transcripts(
+            #     cell_line,
+            #     dict_of_transcripts,
+            #     FPKM_THRESHOLD
+            # )
+            # dictionary_of_unique_transcripts = processed_transcripts["dictionary_of_unique_transcripts"]
+            # list_transcripts = processed_transcripts["list_transcripts"]
+            # ##########################################################################
+            # # USE TSS to group and fetch all AS events
+            # dict_group_transcripts = {}
+            # for transcript in dictionary_of_unique_transcripts.itervalues():
+            #     # TSS id
+            #     TSS_id = '-' + transcript.chromosome + '-' + str(transcript.exons[0].start)
+            #     # if not dict_group_transcripts.has_key(transcript.gene_id):
+            #     if TSS_id not in dict_group_transcripts:
+            #         dict_group_transcripts[TSS_id] = [transcript]
+            #     else:
+            #         dict_group_transcripts[TSS_id].append(transcript)
+            # as_location_output = open(PREPROCESS_OUTPUT_PATH + '/ASlocation.out', 'w')
+            # complete_output = open(PREPROCESS_OUTPUT_PATH + '/complete_transcripts.fasta', 'w')
+            # as_events_output = open(PREPROCESS_OUTPUT_PATH + '/events.fa', 'w')
+            # print "Fetching all exclusion/inclusion events... \n"
+            # for TSS_id, list_transcripts in dict_group_transcripts.iteritems():
+            #     if len(list_transcripts) > 1:
+            #         print >> as_events_output, \
+            #             preprocess_helpers.fetch_events(list_transcripts,
+            #                                             as_location_output,
+            #                                             complete_output,
+            #                                             as_events_output)
+            # as_location_output.close()
+            # complete_output.close()
+            # as_events_output.close()
 
             ##########################################################################
-
             # BLAST
             uniprot_file_location = PREPROCESS_SETTINGS["UNIPROT_FILE_LOCATION"]
             events_file_location = PULSE_PATH + '/output/preprocess/' + cell_line + '/events.fa'
             output_location = PULSE_PATH + '/output/preprocess/' + cell_line + '/blastx_from_AS_events.out'
-
             print "Now blasting the events.fa file from: " + cell_line + "\n"
-
-            blast.blast_events(uniprot_file_location, events_file_location, output_location)
-
+            blast_exit_code = blast.blast_events(uniprot_file_location, events_file_location, output_location)
+            print blast_exit_code
             ##########################################################################
+            if blast_exit_code == 0:
+                print "Blast success!"
+                pass
+                # # Generate mapping between uniprot to splicing events with filter map
+                # blast_file = output_location
+                # readFrom = open(blast_file, 'r')
+                # uniprot_fasta = uniprot_file_location
+                # isoform_fasta = PREPROCESS_OUTPUT_PATH + '/complete_transcripts.fasta'
+                # os.makedirs(PREPROCESS_OUTPUT_PATH + '/temp')
+                # filtermap_not_len_collapsed_output = open(PREPROCESS_OUTPUT_PATH +
+                #                                           '/temp/rnaseq_huniprot_corrected_len.txt', 'w')
+                # filtermap_len_collapsed_output = open(PREPROCESS_OUTPUT_PATH +
+                #                                       '/temp/rnaseq_huniprot_corrected_len_collapsed.txt', 'w')
+                # filtermap.filter_map1(blast_file, uniprot_fasta, isoform_fasta, filtermap_not_len_collapsed_output)
+                # filtermap.filter_map2(uniprot_fasta, isoform_fasta, filtermap_not_len_collapsed_output,
+                #                       filtermap_len_collapsed_output)
+                # ##########################################################################
+                #
+                # # generate index
+                #
+                # ##########################################################################
+            else:
+                print "BLAST Failed."
+                # TODO: Write better error statement for debugging.
 
-            # Generate mapping between uniprot to splicing events with filter map
-            blast_file = output_location
-            readFrom = open(blast_file, 'r')
-            uniprot_fasta = uniprot_file_location
-            isoform_fasta = PREPROCESS_OUTPUT_PATH + '/complete_transcripts.fasta'
-
-            os.makedirs(PREPROCESS_OUTPUT_PATH + '/temp')
-            filtermap_not_len_collapsed_output = open(PREPROCESS_OUTPUT_PATH +
-                                                      '/temp/rnaseq_huniprot_corrected_len.txt', 'w')
-
-            filtermap_len_collapsed_output = open(PREPROCESS_OUTPUT_PATH +
-                                                  '/temp/rnaseq_huniprot_corrected_len_collapsed.txt', 'w')
-
-            filtermap.filter_map1(blast_file, uniprot_fasta, isoform_fasta, filtermap_not_len_collapsed_output)
-            filtermap.filter_map2(uniprot_fasta, isoform_fasta, filtermap_not_len_collapsed_output,
-                                 filtermap_len_collapsed_output)
-
-            ##########################################################################
-
-            # generate index
-
-            ##########################################################################
     else:
         print "Invalid input. Quitting..."
         quit()
 
-
-
         # Feature extraction
 
-        # Machine learning
+        # Machine learning step
+        # TODO: Port random forest classifier over to Python

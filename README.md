@@ -15,3 +15,10 @@ Use `readlink -e .` when you're in root, and export that variable to PULSE_PATH 
 ```
 export PULSE_PATH=<result from readlink -e .>
 ```
+
+### TODO:
+* Need to download the uniprot using API and insert into pulse/input. After the uniprot_sprot file is downloaded into input/, need to run:
+```
+formatdb -i ./input/uniprot_sprot.fasta -p T
+```
+This creates a hashed version of uniprot_sprot.fasta database
