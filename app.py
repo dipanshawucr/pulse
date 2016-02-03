@@ -134,16 +134,16 @@ if __name__ == "__main__":
 
                 print "Running filtermap 1\n"
                 filtermap.filter_map1(blast_file, filtermap_not_len_collapsed_output)
-                time.sleep(3)
+                time.sleep(1)
                 print "Running filtermap 2\n"
                 filtermap.filter_map2(filtermap_not_len_collapsed_output, filtermap_len_collapsed_output)
-                time.sleep(3)
+                time.sleep(1)
                 print "Running filtermap 3\n"
                 uniprot_ddbb = filtermap.filter_map3(uniprot_fasta)
-                time.sleep(3)
+                time.sleep(1)
                 print "Running filtermap 4\n"
                 isoforms_ddbb = filtermap.filter_map4(isoform_fasta)
-                time.sleep(3)
+                time.sleep(1)
                 print "Running filtermap 5\n"
                 has_mapping = filtermap.filter_map5(filtermap_len_collapsed_output)
                 time.sleep(3)

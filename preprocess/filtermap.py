@@ -1,3 +1,5 @@
+import time
+
 def p_beg_end(p_start, pend, p_length):
     phend = (pend + THRESHOLD / 3 > p_length)
     phbeg = (p_start - THRESHOLD / 3 < 1)
@@ -186,7 +188,7 @@ def filter_map4(isoform_fasta):
             if line[0] == '>':
                 isoforms_ddbb[uid] = len(seq)
                 # PARSING ID
-                uid = line.split(SEP)[1].strip()
+                uid = line.split(SEP)[1].strip().split(";")[0]
                 seq = ''
             # PARSING ID
             else:
@@ -262,8 +264,8 @@ def filter_map6(read_from, write_to, has_mapping, uniprot_ddbb, isoforms_ddbb):
         a_end = p_end - c2_hit_length / 3
 
         # PARSING ID
-        # ID HANDELING change it if you need it
-        transcript_isoform = _id[2:].split('-')[0]
+        # ID HANDLING change it if you need it
+        transcript_isoform = _id[2:].split(';')[0]
         # PARSING ID
 
         try:
