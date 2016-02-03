@@ -5,7 +5,7 @@ import time
 import json
 import pickle
 from for_preprocess import for_preprocess, cufflinks, samtools
-from preprocess import preprocess_helpers, blast, filtermap
+from preprocess import preprocess_helpers, blast, filtermap, generate_index_and_libs
 from preprocess.reference_genome import load_and_pickle_reference_genome, load_pickled_reference_genome
 
 try:
@@ -57,7 +57,7 @@ if __name__ == "__main__":
             ##########################################################################
             PREPROCESS_OUTPUT_PATH = PULSE_PATH + '/output/preprocess/' + cell_line
             ##########################################################################
-
+            # # TODO: This alternative splicing event detection can be made simpler
             # preprocess_helpers.create_paths_for_transcript(PULSE_PATH, cell_line)
             # print "Preprocessing paths created for: " + cell_line
             # print "Beginning alternative splicing extraction step for: " + cell_line
@@ -153,6 +153,18 @@ if __name__ == "__main__":
                 ##########################################################################
 
                 # generate index
+                blastx_file = PREPROCESS_OUTPUT_PATH + '/temp/rnaseq_huniprot_corrected_len_collapsed.txt'
+                complete_transcripts = isoform_fasta
+                cdna_output_location = PREPROCESS_OUTPUT_PATH + '/cdna_transcripts.fasta'
+                pseq_output_location = PREPROCESS_OUTPUT_PATH + '/pSeq_isoforms.fas'
+                uniprot_exon_indices_output = PREPROCESS_OUTPUT_PATH + '/uniprot_exon_indices.txt'
+                generate_index_and_libs.generate1(blastx_file, complete_transcripts, cdna_output_location,
+                                                  pseq_output_location)
+                dict_isoforms_len = generate_index_and_libs.generate2(pseq_output_location)
+                dict_canonical_len = generate_index_and_libs.generate3(filtermap_uniprot_exon_indices_map,
+                                                                       uniprot_file_location)
+                generate_index_and_libs.generate4(dict_isoforms_len, dict_canonical_len, uniprot_exon_indices_output)
+
 
 
                 ##########################################################################
