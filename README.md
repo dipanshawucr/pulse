@@ -3,6 +3,9 @@ predicting protein stability
 
 Change `preprocess/preprocess_settings.json` to your desired settings before use.
 
+### DEPENDENCIES
+* The last step of the preprocessing step requires the [biopython package](https://github.com/biopython/biopython)
+
 ### SETUP
 
 To create the necessary directories for output from pipeline:
