@@ -1,6 +1,7 @@
 # Main command-line interface for PULSE
 import os
 import sys
+import time
 import json
 import pickle
 from for_preprocess import for_preprocess, cufflinks, samtools
@@ -103,37 +104,57 @@ if __name__ == "__main__":
             # as_location_output.close()
             # complete_output.close()
             # as_events_output.close()
-
-            ##########################################################################
-            # BLAST
+            #
+            # ##########################################################################
+            # # BLAST
             uniprot_file_location = PREPROCESS_SETTINGS["UNIPROT_FILE_LOCATION"]
             events_file_location = PULSE_PATH + '/output/preprocess/' + cell_line + '/events.fa'
             output_location = PULSE_PATH + '/output/preprocess/' + cell_line + '/blastx_from_AS_events.out'
-            print "Now blasting the events.fa file from: " + cell_line + "\n"
-            blast_exit_code = blast.blast_events(uniprot_file_location, events_file_location, output_location)
-            print blast_exit_code
+            # print "Now blasting the events.fa file from: " + cell_line + "\n"
+            # blast_exit_code = blast.blast_events(uniprot_file_location, events_file_location, output_location)
+            # print blast_exit_code
             ##########################################################################
+            blast_exit_code = 0
             if blast_exit_code == 0:
                 print "Blast success!"
                 pass
-                # # Generate mapping between uniprot to splicing events with filter map
-                # blast_file = output_location
-                # readFrom = open(blast_file, 'r')
-                # uniprot_fasta = uniprot_file_location
-                # isoform_fasta = PREPROCESS_OUTPUT_PATH + '/complete_transcripts.fasta'
-                # os.makedirs(PREPROCESS_OUTPUT_PATH + '/temp')
-                # filtermap_not_len_collapsed_output = open(PREPROCESS_OUTPUT_PATH +
-                #                                           '/temp/rnaseq_huniprot_corrected_len.txt', 'w')
-                # filtermap_len_collapsed_output = open(PREPROCESS_OUTPUT_PATH +
-                #                                       '/temp/rnaseq_huniprot_corrected_len_collapsed.txt', 'w')
-                # filtermap.filter_map1(blast_file, uniprot_fasta, isoform_fasta, filtermap_not_len_collapsed_output)
-                # filtermap.filter_map2(uniprot_fasta, isoform_fasta, filtermap_not_len_collapsed_output,
-                #                       filtermap_len_collapsed_output)
-                # ##########################################################################
-                #
-                # # generate index
-                #
-                # ##########################################################################
+                # Generate mapping between uniprot to splicing events with filter map
+                blast_file = output_location
+                uniprot_fasta = uniprot_file_location
+                isoform_fasta = PREPROCESS_OUTPUT_PATH + '/complete_transcripts.fasta'
+
+                if not os.path.exists(PREPROCESS_OUTPUT_PATH + '/temp'):
+                    os.makedirs(PREPROCESS_OUTPUT_PATH + '/temp')
+
+                filtermap_not_len_collapsed_output = PREPROCESS_OUTPUT_PATH + \
+                                                     '/temp/rnaseq_huniprot_corrected_len.txt'
+                filtermap_len_collapsed_output = PREPROCESS_OUTPUT_PATH + \
+                                                 '/temp/rnaseq_huniprot_corrected_len_collapsed.txt'
+                filtermap_uniprot_exon_indices_map = PREPROCESS_OUTPUT_PATH + '/uniprot_exon_indices_map.out'
+
+                print "Running filtermap 1\n"
+                filtermap.filter_map1(blast_file, filtermap_not_len_collapsed_output)
+                time.sleep(3)
+                print "Running filtermap 2\n"
+                filtermap.filter_map2(filtermap_not_len_collapsed_output, filtermap_len_collapsed_output)
+                time.sleep(3)
+                print "Running filtermap 3\n"
+                uniprot_ddbb = filtermap.filter_map3(uniprot_fasta)
+                time.sleep(3)
+                print "Running filtermap 4\n"
+                isoforms_ddbb = filtermap.filter_map4(isoform_fasta)
+                time.sleep(3)
+                print "Running filtermap 5\n"
+                has_mapping = filtermap.filter_map5(filtermap_len_collapsed_output)
+                time.sleep(3)
+                print "Running filtermap 6\n"
+                filtermap.filter_map6(filtermap_not_len_collapsed_output, filtermap_uniprot_exon_indices_map,
+                                      has_mapping, uniprot_ddbb, isoforms_ddbb)
+                ##########################################################################
+
+                # generate index
+
+                ##########################################################################
             else:
                 print "BLAST Failed."
                 # TODO: Write better error statement for debugging.

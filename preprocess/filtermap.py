@@ -1,19 +1,20 @@
-def pbegend(pstart, pend, plength):
-    phend = (pend + THRESHOLD / 3 > plength)
-    phbeg = (pstart - THRESHOLD / 3 < 1)
+def p_beg_end(p_start, pend, p_length):
+    phend = (pend + THRESHOLD / 3 > p_length)
+    phbeg = (p_start - THRESHOLD / 3 < 1)
 
     return [phbeg, phend]
 
 
-def mbegend(nstart, nend, nlength, backwards):
+def m_beg_end(n_start, n_end, n_length, backwards):
     if backwards:
-        temp = nstart
-        nstart = nend
-        nend = temp
-    mhend = (nend + THRESHOLD > nlength)
-    mhbeg = (nstart - THRESHOLD < 1)
+        temp = n_start
+        n_start = n_end
+        n_end = temp
+    mhend = (n_end + THRESHOLD > n_length)
+    mhbeg = (n_start - THRESHOLD < 1)
 
     return [mhbeg, mhend]
+
 
 # CONSTANTS
 # TODO: Move these to preprocess_settings.json
@@ -23,19 +24,12 @@ IGNORE_EXCLUSION = False
 DEAL_WITH_NUCLEOTIDE = False
 
 
-def filter_map1(blast_file, uniprot_fasta, isoform_fasta, rna_seq_output):
+def filter_map1(blast_file, rna_seq_output):
     read_from = open(blast_file, 'r')
-
+    write_to = open(rna_seq_output, 'w')
     for line in read_from:
-
-        (query_id,
-         perc_identity,
-         aln_length,
-         query_start,
-         query_end,
-         subject_start,
-         subject_end) = line.split('\t')
-
+        (query_id, subject_id, perc_identity, aln_length, mismatch_count, gap_open_count,
+         query_start, query_end, subject_start, subject_end, e_val, bit_score) = line.split('\t')
         try:
             # PARSING ID
             snucleotide_lengths = query_id.split("-")[-1].split("=")
@@ -54,23 +48,23 @@ def filter_map1(blast_file, uniprot_fasta, isoform_fasta, rna_seq_output):
             p_end /= 3.0
             p_length /= 3.0
 
-        nstart = int(query_start)
-        nend = int(query_end)
-        nlength = sum(nucleotide_lengths)
+        n_start = int(query_start)
+        n_end = int(query_end)
+        n_length = sum(nucleotide_lengths)
 
         pident = float(perc_identity)
 
         if query_id[0] == "E":
             if IGNORE_EXCLUSION:
                 continue
-            nlength -= nucleotide_lengths[1]
+            n_length -= nucleotide_lengths[1]
 
         to_print = True
 
-        backwards = (nstart > nend)
+        backwards = (n_start > n_end)
 
-        [hit_p_beg, hit_p_end] = pbegend(p_start, p_end, p_length)
-        [hit_n_beg, hit_n_end] = mbegend(nstart, nend, nlength, backwards)
+        [hit_p_beg, hit_p_end] = p_beg_end(p_start, p_end, p_length)
+        [hit_n_beg, hit_n_end] = m_beg_end(n_start, n_end, n_length, backwards)
 
         exist_beg = True
         exist_end = True
@@ -83,90 +77,105 @@ def filter_map1(blast_file, uniprot_fasta, isoform_fasta, rna_seq_output):
             to_print = False
             exist_end = False
 
-        if not (exist_beg or exist_end):
-            print line.strip() + " no_both"
-        elif not exist_beg:
-            if backwards:
-                print line.strip() + " no_c2"
-            else:
-                print line.strip() + " no_c1"
-        elif not exist_end:
-            if backwards:
-                print line.strip() + " no_c1"
-            else:
-                print line.strip() + " no_c2"
+        # if not (exist_beg or exist_end):
+        #     print line.strip() + " no_both"
+        # elif not exist_beg:
+        #     if backwards:
+        #         print line.strip() + " no_c2"
+        #     else:
+        #         print line.strip() + " no_c1"
+        # elif not exist_end:
+        #     if backwards:
+        #         print line.strip() + " no_c1"
+        #     else:
+        #         print line.strip() + " no_c2"
         else:
-            hit_length = nend - nstart + 1
+            hit_length = n_end - n_start + 1
             if hit_length < 0:
                 hit_length *= -1
                 hit_length += 2
 
-            if ((hit_length + THRESHOLD) / 3 < p_end - p_start + 1) or ((hit_length - THRESHOLD) / 3 > p_end - p_start + 1):
+            if ((hit_length + THRESHOLD) / 3 < p_end - p_start + 1) or (
+                    (hit_length - THRESHOLD) / 3 > p_end - p_start + 1):
                 to_print = False
-                print line.strip() + " missing_chunks"
+                # print line.strip() + " missing_chunks"
 
         if pident < PINDENT_THRESHOLD:
             to_print = False
-            print line.strip() + " pident_failure"
+            # print line.strip() + " pident_failure"
 
         if query_id[0] == "E":
             # make sure A site is within
             if not backwards:
-                if not (nstart <= nucleotide_lengths[0] <= nend):
+                if not (n_start <= nucleotide_lengths[0] <= n_end):
                     to_print = False
             else:
-                if not (nend <= nucleotide_lengths[0] <= nstart):
+                if not (n_end <= nucleotide_lengths[0] <= n_start):
                     to_print = False
 
         if to_print:
-            print >> rna_seq_output, line.strip()[0:len(line)]
+            print >> write_to, line.strip()[0:len(line)]
 
 
-def filter_map2(uniprot_fasta, isoform_fasta, filtermap_not_len_collapsed_output,
-                                 filtermap_len_collapsed_output):
+##########################################################################
 
+
+def filter_map2(read_from, write_to):
     # filters multiple uniprot hits by taking the best one in terms of evalue
+    read_from = open(read_from, 'r')
+    write_to = open(write_to, 'w')
 
-    readFrom = open('./temp/rnaseq_huniprot_corrected_len.txt', 'r')
-    writeTo = open('./temp/rnaseq_huniprot_corrected_len_collapsed.txt', 'w')
+    old_id = ""
 
-    oldID = ""
-
-    for line in readFrom:
+    for line in read_from:
         tokens = line.split('\t')
         # PARSING ID
         asid = tokens[0]
-        prot = tokens[1]
-        # PARSING ID
-        # id = asid + "//" + prot
-        id = asid
+        _id = asid
 
-        if oldID != id:
-            print >> writeTo, line.strip()
+        if old_id != _id:
+            print >> write_to, line.strip()
 
-        oldID = id
+        old_id = _id
 
-    ###
-    # LOAD UNIPROT
+##########################################################################
+
+
+def filter_map3(uniprot_fasta):
+    """
+    Returns uniprot_ddbb.
+
+    :param uniprot_fasta:
+    :return:
+    """
     uniprot_ddbb = {}
     seq = ''
     uid = '|'
-    SEP = '|'
-    # print uniprot_fasta
+    sep = '|'
     with open(uniprot_fasta, 'r') as input_file:
         for line in input_file:
             if line[0] == '>':
                 uniprot_ddbb[uid] = len(seq)
                 # PARSING ID
-                uid = line.split(SEP)[1]
+                uid = line.split(sep)[1]
                 seq = ''
             # PARSING ID
             else:
                 seq += line.strip()
 
     uniprot_ddbb[uid] = len(seq)
-    ###
-    # LOAD ISOFORM IN FASTA
+    return uniprot_ddbb
+
+##########################################################################
+
+
+def filter_map4(isoform_fasta):
+    """
+    Load isoform in fasta.
+
+    :param isoform_fasta:
+    :return:
+    """
     isoforms_ddbb = {}
     seq = ''
     uid = ''
@@ -176,7 +185,6 @@ def filter_map2(uniprot_fasta, isoform_fasta, filtermap_not_len_collapsed_output
         for line in input_file:
             if line[0] == '>':
                 isoforms_ddbb[uid] = len(seq)
-                # CHANGES THE LINE BELOW if is need it
                 # PARSING ID
                 uid = line.split(SEP)[1].strip()
                 seq = ''
@@ -185,92 +193,100 @@ def filter_map2(uniprot_fasta, isoform_fasta, filtermap_not_len_collapsed_output
                 seq += line.strip()
 
     isoforms_ddbb[uid] = len(seq)
+    return isoforms_ddbb
 
-    # tags on spliced exon indices on query hits using pstart pend nstart and nend along with A exon positions
+##########################################################################
+
+
+def filter_map5(read_from):
+    """
+
+    :param read_from:
+    :return:
+    """
+    # tags on spliced exon indices on query hits using p_start pend n_start and n_end along with A exon positions
     # this information is obtained from the splice sequence to uniprot mapping file
+    read_from = open(read_from, 'r')
 
-    ##########################################################################
-    ##########################################################################
+    has_mapping = {}
 
-    readFrom = open('./temp/rnaseq_huniprot_corrected_len_collapsed.txt', 'r')
-    writeTo = open('uniprot_exon_indices_map.out', 'w')
-
-    hasMapping = {}
-
-    for line in readFrom:
+    for line in read_from:
         tokens = line.split('\t')
         # PARSING ID
         id = tokens[0]  # asid
         uniprot = tokens[1].split("|")[1]
         # PARSING ID
-        if hasMapping.has_key(id):
-            hasMapping[id].append(uniprot)
+        if has_mapping.has_key(id):
+            has_mapping[id].append(uniprot)
         else:
-            hasMapping[id] = [uniprot]
+            has_mapping[id] = [uniprot]
 
-    readFrom.close()
+    read_from.close()
+    return has_mapping
 
-    ##########################################################################
-    ##########################################################################
+##########################################################################
 
-    readFrom = open('./temp/rnaseq_huniprot_corrected_len_collapsed.txt', 'r')
 
-    for line in readFrom:
+def filter_map6(read_from, write_to, has_mapping, uniprot_ddbb, isoforms_ddbb):
+    read_from = open(read_from, 'r')
+    write_to = open(write_to, 'w')
+    for line in read_from:
         tokens = line.split('\t')
 
         # PARSING ID
-        id = tokens[0]  # asid
+        _id = tokens[0]  # asid
         uniprot = tokens[1].split("|")[1]
         # PARSING ID
 
-        snucleotideLengths = tokens[0].split("-")[-1].split("=")
-        nucleotideLengths = [int(snucleotideLengths[0]), int(snucleotideLengths[1]), int(snucleotideLengths[2])]
+        snucleotide_lengths = tokens[0].split("-")[-1].split("=")
+        nucleotide_lengths = [int(snucleotide_lengths[0]), int(snucleotide_lengths[1]), int(snucleotide_lengths[2])]
 
-        pstart = int(tokens[8])
-        pend = int(tokens[9])
-        nstart = int(tokens[6])
-        nend = int(tokens[7])
+        p_start = int(tokens[8])
+        p_end = int(tokens[9])
+        n_start = int(tokens[6])
+        n_end = int(tokens[7])
 
-        if nstart < nend:  # these could be negative
-            c1HitLength = nucleotideLengths[0] - nstart + 1
-            c2HitLength = nucleotideLengths[2] - (sum(nucleotideLengths) - nend + 1)
+        if n_start < n_end:  # these could be negative
+            c1_hit_length = nucleotide_lengths[0] - n_start + 1
+            c2_hit_length = nucleotide_lengths[2] - (sum(nucleotide_lengths) - n_end + 1)
         else:
-            c1HitLength = nucleotideLengths[0] - nend + 1
-            c2HitLength = nucleotideLengths[2] - (sum(nucleotideLengths) - nstart + 1)
+            c1_hit_length = nucleotide_lengths[0] - n_end + 1
+            c2_hit_length = nucleotide_lengths[2] - (sum(nucleotide_lengths) - n_start + 1)
 
-        if c1HitLength < 0:
-            c1HitLength = 0;
-        if c2HitLength < 0:
-            c2HitLength = 0;
+        if c1_hit_length < 0:
+            c1_hit_length = 0
+        if c2_hit_length < 0:
+            c2_hit_length = 0
 
-        aStart = pstart + c1HitLength / 3
-        aEnd = pend - c2HitLength / 3
+        a_start = p_start + c1_hit_length / 3
+        a_end = p_end - c2_hit_length / 3
+
         # PARSING ID
         # ID HANDELING change it if you need it
-        transcript_isoform = id[2:].split('-')[0]
+        transcript_isoform = _id[2:].split('-')[0]
         # PARSING ID
 
         try:
-
-            if aStart > 0 and aEnd > 0 and aEnd >= aStart and "-" not in uniprot:
-                if id[0] == "I":
-                    listProt = []
-                    if hasMapping.has_key("E" + id[1:len(id)]):
-                        listProt = hasMapping["E" + id[1:len(id)]]
-                    print >> writeTo, id + "\t" + uniprot + "\t" + repr(pstart) + "\t" + repr(aStart) + "\t" + repr(
-                        aEnd) + "\t" + repr(pend) + "\t" + repr(listProt) + "\t" + str(uniprot_ddbb[uniprot]) + "\t" + str(
-                        isoforms_ddbb[transcript_isoform])
+            if (a_start and a_end) > 0 and a_end >= a_start and "-" not in uniprot:
+                if _id[0] == "I":
+                    list_prot = []
+                    if ("E" + _id[1:len(_id)]) in has_mapping:
+                        list_prot = has_mapping["E" + _id[1:len(_id)]]
+                    print >> write_to, _id + "\t" + uniprot + "\t" + repr(p_start) + "\t" + repr(a_start) + \
+                                       "\t" + repr(a_end) + "\t" + repr(p_end) + "\t" + repr(list_prot) + \
+                                       "\t" + str(uniprot_ddbb[uniprot]) + "\t" + str(isoforms_ddbb[transcript_isoform])
                 else:
-                    listProt = []
-                    if hasMapping.has_key("I" + id[1:len(id)]):
-                        listProt = hasMapping["I" + id[1:len(id)]]
-                    print >> writeTo, id + "\t" + uniprot + "\t" + repr(pstart) + "\t" + repr(aStart) + "\t" + repr(
-                        aStart) + "\t" + repr(pend) + "\t" + repr(listProt) + "\t" + str(
-                        uniprot_ddbb[uniprot]) + "\t" + str(isoforms_ddbb[transcript_isoform])
+                    list_prot = []
+                    if ("I" + _id[1:len(_id)]) in has_mapping:
+                        list_prot = has_mapping["I" + _id[1:len(_id)]]
+                    print >> write_to, _id + "\t" + uniprot + "\t" + repr(p_start) + "\t" + repr(a_start) + \
+                                       "\t" + repr(a_start) + "\t" + repr(p_end) + "\t" + repr(list_prot) + \
+                                       "\t" + str(uniprot_ddbb[uniprot]) + "\t" + \
+                                       str(isoforms_ddbb[transcript_isoform])
             else:
                 pass
 
         except KeyError, e:
             print '%s NOT FOUND ' % str(e)
             print 'Please check your Uniprot file or/and your poll of isoforms'
-        # print id
+            # print id
