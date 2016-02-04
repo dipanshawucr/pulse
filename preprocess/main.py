@@ -8,7 +8,7 @@ from preprocess import preprocess_helpers, blast, filtermap, generate_index_and_
 def preprocess_cell_line(cell_line, ref_genome, pulse_path, preprocess_output_path):
     # TODO: This alternative splicing event detection can be made simpler
     PREPROCESS_SETTINGS = json.load(open(pulse_path + '/preprocess/preprocess_settings.json', 'r'))
-    preprocess_helpers.create_paths_for_transcript(pulse_path, cell_line)
+    preprocess_helpers.create_paths_for_cell_line(pulse_path, cell_line)
     print "Preprocessing paths created for: " + cell_line
     print "Beginning alternative splicing extraction step for: " + cell_line
     print "Loading assembled transcripts... \n"

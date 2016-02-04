@@ -1,5 +1,6 @@
 import pickle
-from preprocess.preprocess_helpers import normalize_unicode_data, load_sequence
+from preprocess.preprocess_helpers import load_sequence
+from helpers.normalize_unicode_data import normalize_unicode_data
 
 
 class ReferenceGenome(object):

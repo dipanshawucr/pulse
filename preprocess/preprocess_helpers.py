@@ -1,36 +1,24 @@
-import unicodedata
 import os
 from transcript import Transcript
 
 
-def create_paths_for_transcript(pulse_path, transcript):
+def create_paths_for_cell_line(pulse_path, cell_line):
     """
     Creates all necessary paths for preprocess:
 
     Base folder for cell line:
     - ../output/preprocess/<CELL_LINE_NAME>/
 
-    :param transcript:
+    :param cell_line:
     :param pulse_path:
     :return:
     """
 
-    paths_to_create = [pulse_path + r'/output/preprocess/' + transcript]
+    paths_to_create = [pulse_path + r'/output/preprocess/' + cell_line]
     for path in paths_to_create:
         print path
         if not os.path.exists(path):
             os.makedirs(path)
-
-
-def normalize_unicode_data(data):
-    """
-    Returns a Python-normalized String object from unicode.
-
-    :param data:
-    :return:
-    """
-    normalized_data = unicodedata.normalize('NFKD', data).encode('ascii', 'ignore')
-    return normalized_data
 
 
 def load_sequence(refgenome_directory, chromosome):
