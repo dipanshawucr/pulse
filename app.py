@@ -1,6 +1,6 @@
 # Main command-line interface for PULSE
 import os
-import pickle
+
 # TODO: Could refactor for_preprocess better
 from for_preprocess import for_preprocess, cufflinks, samtools
 from preprocess.reference_genome import load_and_pickle_reference_genome, load_pickled_reference_genome
@@ -20,19 +20,22 @@ if __name__ == "__main__":
     ##########################
     # SAMTOOLS AND CUFFLINKS #
     ##########################
+    proceed_to_samtools_cufflinks = raw_input("Press Y to proceed to cufflinks and samtools: ")
+    if proceed_to_samtools_cufflinks == 'Y':
+        for cell_line in all_cell_lines:
+            for_preprocess.create_paths_for_cell_line(cell_line)
+            print "for_preprocessing paths created for: " + cell_line
+            print "Running samtools for: " + cell_line
+            samtools.run_samtools(PULSE_PATH, cell_line)
+            print "Finished samtools for: " + cell_line
+            print "Running cufflinks for: " + cell_line
+            cufflinks.run_cufflinks(PULSE_PATH, cell_line)
+            print "Finished cufflinks for: " + cell_line
+    else:
+        "Invalid input. Skipping samtools and cufflinks step..."
+        pass
 
-    for cell_line in all_cell_lines:
-        for_preprocess.create_paths_for_cell_line(cell_line)
-        print "for_preprocessing paths created for: " + cell_line
-        print "Running samtools for: " + cell_line
-        samtools.run_samtools(PULSE_PATH, cell_line)
-        print "Finished samtools for: " + cell_line
-        print "Running cufflinks for: " + cell_line
-        cufflinks.run_cufflinks(PULSE_PATH, cell_line)
-        print "Finished cufflinks for: " + cell_line
-
-    print "Finished cufflinks and samtools for all cell lines: " + str(all_cell_lines)
-    proceed_to_preprocessing = raw_input("Press Y to proceed to preprocessing: \n")
+    proceed_to_preprocessing = raw_input("Press Y to proceed to preprocessing: ")
 
     #################
     # PREPROCESSING #
@@ -52,25 +55,27 @@ if __name__ == "__main__":
             PREPROCESS_OUTPUT_PATH = PULSE_PATH + '/output/preprocess/' + cell_line
             preprocess_cell_line(cell_line, ref_genome, PULSE_PATH, PREPROCESS_OUTPUT_PATH)
     else:
-        print "Invalid input. Quitting...\n"
-        quit()
+        print "Invalid input. Skipping preprocessing step..."
+        pass
 
     ######################
     # FEATURE EXTRACTION #
     ######################
 
-    print "Cell lines all preprocessed, now entering feature extraction.\n"
-    proceed_to_feature_extraction = raw_input("Press Y to proceed to feature extraction: \n")
+    print "Now entering feature extraction."
+    proceed_to_feature_extraction = raw_input("Press Y to proceed to feature extraction: ")
     if proceed_to_feature_extraction == "Y":
         all_cell_lines_for_features = os.listdir(PULSE_PATH + '/output/preprocess')
         for cell_line in all_cell_lines_for_features:
+            PREPROCESS_OUTPUT_PATH = PULSE_PATH + '/output/preprocess/' + cell_line
             FEATURE_EXTRACT_OUTPUT_PATH = PULSE_PATH + '/output/features/' + cell_line
-            # Wrapper for all feature extraction
-            feature_extract_cell_line(cell_line, FEATURE_EXTRACT_OUTPUT_PATH)
-
+            feature_extract_cell_line(cell_line, PULSE_PATH, PREPROCESS_OUTPUT_PATH, FEATURE_EXTRACT_OUTPUT_PATH)
     else:
-        print "Invalid inpud. Quitting...\n"
-        quit()
+        print "Invalid input. Skipping feature extraction..."
+        pass
 
-        # Machine learning step
-        # TODO: Port random forest classifier over to Python
+    ###########
+    # ML STEP #
+    ###########
+
+    # TODO: Port random forest classifier over to Python
