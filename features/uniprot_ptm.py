@@ -1,9 +1,17 @@
-# reads uniprot PTM file and generates post translational modification site features
 from features_helpers import score_differences
 
 
 def get_postranscriptional_modification_features(uniprot_exon_indices_location, uniprot_ptm_db_location,
                                                  output_file_location):
+    """
+    Reads uniprot PTM file and generates post translational modification site features.
+
+    :param uniprot_exon_indices_location:
+    :param uniprot_ptm_db_location:
+    :param output_file_location:
+    :return:
+    """
+
     read_from = open(uniprot_ptm_db_location, 'r')
     uniprot_exon_indices = open(uniprot_exon_indices_location, 'r')
     write_to = open(output_file_location, 'w')
@@ -11,12 +19,10 @@ def get_postranscriptional_modification_features(uniprot_exon_indices_location, 
 
     for line in read_from:
         tokens = line.split()
-
         try:
             uniprot = tokens[0]
             index = int(tokens[1])
             ptm = tokens[3]
-
             if uniprot_to_index_to_ptm.has_key(uniprot):
                 uniprot_to_index_to_ptm[uniprot][index] = "*"
             else:

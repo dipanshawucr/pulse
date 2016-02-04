@@ -2,6 +2,7 @@ import json
 from features.features_helpers import create_paths_for_cell_line
 from features.uniprot_transmem import get_transmembrane_region_features
 from features.uniprot_ptm import get_postranscriptional_modification_features
+from features.uniprot_elm_read import get_uniprot_elm_features
 from helpers.normalize_unicode_data import normalize_unicode_data
 
 
@@ -40,5 +41,14 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
     ###################################
 
     print "Now getting eukaryotic linear motif scores..."
-
+    uniprot_elm_db_location = normalize_unicode_data(features_settings["F_ELM2.inp"])
+    uniprot_elm_read_output_location = feature_extract_output_path + '/elm_read.out'
+    get_uniprot_elm_features(uniprot_exon_indices_location, uniprot_elm_db_location, uniprot_elm_read_output_location)
     print "Finished getting eukaryotic linear motif scores."
+
+    ########################
+    # DISORDEROME FEATURES #
+    ########################
+
+    print "Now getting disorderome features..."
+    print "Finished getting disorderome features."

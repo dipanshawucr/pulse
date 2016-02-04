@@ -1,8 +1,17 @@
 from features_helpers import score_differences
 
 
-def get_transmembrane_region_features(uniprot_exon_indices_location, uniprot_tm_indices_db_location
-                                      , output_file_location):
+def get_transmembrane_region_features(uniprot_exon_indices_location, uniprot_tm_indices_db_location,
+                                      output_file_location):
+    """
+    Reads uniprot TM indices DB and generates transmembrane scores.
+
+    :param uniprot_exon_indices_location:
+    :param uniprot_tm_indices_db_location:
+    :param output_file_location:
+    :return:
+    """
+
     read_from = open(uniprot_exon_indices_location, 'r')
     write_to = open(output_file_location, 'w')
     uniprot_to_index_to_whatever = {}
@@ -10,19 +19,15 @@ def get_transmembrane_region_features(uniprot_exon_indices_location, uniprot_tm_
     uniprot_tm_indices_db = open(uniprot_tm_indices_db_location, 'r')
     for line in uniprot_tm_indices_db:
         tokens = line.split("\t")
-
         try:
             uniprot = tokens[0].strip()
             start = int(tokens[2].strip())
             end = int(tokens[3].strip())
-
             for i in range(start, end + 1):
-
                 if uniprot_to_index_to_whatever.has_key(uniprot):
                     uniprot_to_index_to_whatever[uniprot][i] = "*"
                 else:
                     uniprot_to_index_to_whatever[uniprot] = {i: "*"}
-
         except ValueError:
             print "Cannot parse: " + line[0:len(line) - 1]
 
@@ -48,7 +53,7 @@ def get_transmembrane_region_features(uniprot_exon_indices_location, uniprot_tm_
             a_count = 0
             c2_count = 0
             canonical_absolute = 0
-            otherAbsolute = 0
+            other_absolute = 0
         else:
             c1_count = score_differences(uniprot_to_index_to_whatever, prot, sstart, start)
             a_count = score_differences(uniprot_to_index_to_whatever, prot, start, end)
