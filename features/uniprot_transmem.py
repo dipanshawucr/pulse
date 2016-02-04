@@ -1,21 +1,4 @@
-def score_differences(mapping, uniprot, start, end):
-    try:
-        count = 0
-        if uniprot in mapping:
-            if start <= end:
-                for i in range(start, end + 1):
-                    if not mapping[uniprot].has_key(i):
-                        pass
-                    elif mapping[uniprot][i] == "*":
-                        count += 1
-                return (1.0 * count) / (end - start + 1)
-
-    except KeyError, e:
-        print 'WARNING!: Features not found '
-        print str(e)
-        print 'Please check ID tags or/and generate the missing features'
-
-        return count # count is already referenced before...
+from features_helpers import score_differences
 
 
 def get_transmembrane_region_features(uniprot_exon_indices_location, uniprot_tm_indices_db_location
@@ -70,10 +53,7 @@ def get_transmembrane_region_features(uniprot_exon_indices_location, uniprot_tm_
             c1_count = score_differences(uniprot_to_index_to_whatever, prot, sstart, start)
             a_count = score_differences(uniprot_to_index_to_whatever, prot, start, end)
             c2_count = score_differences(uniprot_to_index_to_whatever, prot, end, eend)
-
-            protLen = int(line.split("\t")[7].strip())
-
-            canonical_absolute = score_differences(uniprot_to_index_to_whatever, prot, 1, protLen)
-
+            prot_len = int(line.split("\t")[7].strip())
+            canonical_absolute = score_differences(uniprot_to_index_to_whatever, prot, 1, prot_len)
         print >> write_to, tokens[0] + "\t" + prot + "\t" + repr(c1_count) + "\t" + repr(a_count) + "\t" + repr(
             c2_count) + "\t" + repr(canonical_absolute)
