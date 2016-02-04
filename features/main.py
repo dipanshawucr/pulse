@@ -41,7 +41,7 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
     ###################################
 
     print "Now getting eukaryotic linear motif scores..."
-    uniprot_elm_db_location = normalize_unicode_data(features_settings["F_ELM2.inp"])
+    uniprot_elm_db_location = normalize_unicode_data(features_settings["F_ELM2_LOCATION"])
     uniprot_elm_read_output_location = feature_extract_output_path + '/elm_read.out'
     get_uniprot_elm_features(uniprot_exon_indices_location, uniprot_elm_db_location, uniprot_elm_read_output_location)
     print "Finished getting eukaryotic linear motif scores."
