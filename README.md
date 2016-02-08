@@ -1,7 +1,7 @@
 # pulse
 predicting protein stability
 
-Change `preprocess/preprocess_settings.json` to your desired settings before use.
+Change `preprocess/preprocess_settings.json` and `features/features_settings.json` to your desired settings before use.
 
 ### DEPENDENCIES
 * preprocessing requires cufflinks and samtools
@@ -28,6 +28,5 @@ export PULSE_PATH=<result from readlink -e .>
 ### TODO:
 * Need to download the uniprot using API and insert into pulse/input. After the uniprot_sprot file is downloaded into input/, need to run:
 ```
-formatdb -i ./input/uniprot_sprot.fasta -p T
+formatdb -i ./input/uniprot_sprot.fasta -p T            # creates a hashed version of uniprot_sprot.fasta database
 ```
-This creates a hashed version of uniprot_sprot.fasta database
