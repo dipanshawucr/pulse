@@ -3,6 +3,7 @@ from features.features_helpers import create_paths_for_cell_line
 from features.uniprot_transmem import get_transmembrane_region_features
 from features.uniprot_ptm import get_postranscriptional_modification_features
 from features.uniprot_elm_read import get_uniprot_elm_features
+from features.generate_iupred_file import generate_disorder_for
 from helpers.normalize_unicode_data import normalize_unicode_data
 
 
@@ -45,6 +46,18 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
     uniprot_elm_read_output_location = feature_extract_output_path + '/elm_read.out'
     get_uniprot_elm_features(uniprot_exon_indices_location, uniprot_elm_db_location, uniprot_elm_read_output_location)
     print "Finished getting eukaryotic linear motif scores."
+
+    ############################
+    # DISORDEROME HELPER FILES #
+    ############################
+
+    print "Now running helper files for disorderome..."
+    p_seq_output_location = preprocess_input_path + '/p_seq_isoforms.fas'
+    iupred_isoforms_output_location = feature_extract_output_path + '/iupred_isoforms.out'
+    iupred_install_path = normalize_unicode_data(features_settings["IUPRED_INSTALL_PATH"])
+    generate_disorder_for(p_seq_output_location, feature_extract_output_path,
+                          iupred_install_path, iupred_isoforms_output_location)
+    print "Now done running helper file for disorderome."
 
     ########################
     # DISORDEROME FEATURES #

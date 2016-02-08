@@ -4,7 +4,13 @@ predicting protein stability
 Change `preprocess/preprocess_settings.json` to your desired settings before use.
 
 ### DEPENDENCIES
-* The last step of the preprocessing step requires the [biopython package](https://github.com/biopython/biopython)
+* preprocessing requires cufflinks and samtools
+* BLAST is required in the preprocessing step after alternative splice site extraction
+* last step of the preprocessing step requires the [biopython package](https://github.com/biopython/biopython)
+* disorderome scoring step of feature extraction step requires iupred
+* domain scoring requires pfam
+* perl is required for some scripts in feature extraction and in last step
+* sable is required in the last step of feature extraction
 
 ### SETUP
 

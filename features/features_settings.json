@@ -1,5 +1,6 @@
 {
   "F_UNIPROT_TRANSMEM_INDICES_LOCATION": "/home/wonjunetai/Documents/KimLab/pulse/input/param_files/F_uniprot_transmem_indices.inp",
   "F_PTMS_LOCATION": "/home/wonjunetai/Documents/KimLab/pulse/input/param_files/F_PTMs.inp",
-  "F_ELM2_LOCATION": "/home/wonjunetai/Documents/KimLab/pulse/input/param_files/F_ELM2.inp"
+  "F_ELM2_LOCATION": "/home/wonjunetai/Documents/KimLab/pulse/input/param_files/F_ELM2.inp",
+  "IUPRED_INSTALL_PATH": "/home/wonjunetai/Documents/KimLab/tools/iupred/iupred"
 }

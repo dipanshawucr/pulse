@@ -43,7 +43,7 @@ def preprocess_cell_line(cell_line, ref_genome, pulse_path, preprocess_output_pa
         else:
             dict_group_transcripts[TSS_id].append(transcript)
 
-    as_location_output = open(preprocess_output_path + '/ASlocation.out', 'w')
+    as_location_output = open(preprocess_output_path + '/as_location.out', 'w')
     complete_output = open(preprocess_output_path + '/complete_transcripts.fasta', 'w')
     as_events_output = open(preprocess_output_path + '/events.fa', 'w')
     print "Fetching all exclusion/inclusion events... \n"
@@ -62,7 +62,7 @@ def preprocess_cell_line(cell_line, ref_genome, pulse_path, preprocess_output_pa
     # BLAST
     uniprot_file_location = PREPROCESS_SETTINGS["UNIPROT_FILE_LOCATION"]
     events_file_location = pulse_path + '/output/preprocess/' + cell_line + '/events.fa'
-    output_location = pulse_path + '/output/preprocess/' + cell_line + '/blastx_from_AS_events.out'
+    output_location = pulse_path + '/output/preprocess/' + cell_line + '/blastx_from_as_events.out'
     print "Now blasting the events.fa file from: " + cell_line + "\n"
     blast_exit_code = blast.blast_events(uniprot_file_location, events_file_location, output_location)
     print blast_exit_code
@@ -110,7 +110,7 @@ def preprocess_cell_line(cell_line, ref_genome, pulse_path, preprocess_output_pa
         blastx_file = preprocess_output_path + '/temp/rnaseq_huniprot_corrected_len_collapsed.txt'
         complete_transcripts = isoform_fasta
         cdna_output_location = preprocess_output_path + '/cdna_transcripts.fasta'
-        pseq_output_location = preprocess_output_path + '/pSeq_isoforms.fas'
+        pseq_output_location = preprocess_output_path + '/p_seq_isoforms.fas'
         print "Running generate 1"
         generate_index_and_libs.generate1(blastx_file, complete_transcripts,
                                           filtermap_uniprot_exon_indices_map,
