@@ -60,6 +60,7 @@ def preprocess_cell_line(cell_line, ref_genome, pulse_path, preprocess_output_pa
 
     # ##########################################################################
     # BLAST
+    # TODO: Automate the step where formatdb has to be called
     uniprot_file_location = PREPROCESS_SETTINGS["UNIPROT_FILE_LOCATION"]
     events_file_location = pulse_path + '/output/preprocess/' + cell_line + '/events.fa'
     output_location = pulse_path + '/output/preprocess/' + cell_line + '/blastx_from_as_events.out'

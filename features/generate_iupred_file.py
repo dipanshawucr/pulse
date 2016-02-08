@@ -8,7 +8,7 @@ def delete_tmp_file(feature_extract_output_path):
 
 
 def write_tmp_file(content, feature_extract_output_path):
-    write_to = open(feature_extract_output_path+'/temp.seq', 'w')
+    write_to = open(feature_extract_output_path + '/temp.seq', 'w')
     print >> write_to, "temp seq"
     print >> write_to, content
     return
@@ -32,13 +32,10 @@ def save_iupred_out(output, prot_id, output_file):
 
 
 def transform_score(score):
-    if score != "gth 0":
-        if float(score) > .5:
-            return "."
-        else:
-            return "*"
-    else:
+    if float(score) > .5:
         return "."
+    else:
+        return "*"
 
 
 def generate_disorder_for(filename, feature_extract_output_path,
@@ -49,7 +46,7 @@ def generate_disorder_for(filename, feature_extract_output_path,
     with open(filename, 'r') as input_file:
         for line in input_file:
             if line[0] == ">":
-                if len(prot_seq) > 0:
+                if len(prot_seq) > 1:
                     write_tmp_file(prot_seq, feature_extract_output_path)
                     output_iupred = exec_iupred(iupred_install_path, feature_extract_output_path)
                     save_iupred_out(output_iupred, prot_id, output_file)

@@ -47,9 +47,9 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
     get_uniprot_elm_features(uniprot_exon_indices_location, uniprot_elm_db_location, uniprot_elm_read_output_location)
     print "Finished getting eukaryotic linear motif scores."
 
-    ############################
-    # DISORDEROME HELPER FILES #
-    ############################
+    #############################
+    # DISORDEROME HELPER SCRIPT #
+    #############################
 
     print "Now running helper files for disorderome..."
     p_seq_output_location = preprocess_input_path + '/p_seq_isoforms.fas'
@@ -64,4 +64,5 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
     ########################
 
     print "Now getting disorderome features..."
+
     print "Finished getting disorderome features."
