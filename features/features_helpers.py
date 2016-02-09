@@ -40,6 +40,27 @@ def score_differences(mapping, uniprot, start, end):
         print 'Please check ID tags or/and generate the missing features'
 
 
+def score_differences_pfam(mapping, uniprot, start, end):
+    try:
+        count = 0
+        enzymatic = 0
+        if uniprot in mapping:
+            if start <= end:
+                for i in range(start, end + 1):
+                    if i not in mapping[uniprot]:
+                        pass
+                    elif mapping[uniprot][i][0] == "*":
+                        if mapping[uniprot][i][1]:
+                            enzymatic = 1
+                        count += 1
+                return [(1.0 * count) / (end - start + 1), enzymatic]
+
+    except KeyError, e:
+        print 'WARNING!: Features not found for'
+        print  str(e)
+        print 'Please check ID tags or/and generate the missing features'
+
+
 # Used in features.uniprot_disorder
 def link_db(db_path):
     try:

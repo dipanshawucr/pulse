@@ -1,6 +1,5 @@
 # reads uniprot disorder file and generates disorder features
 # do absolute disorder as well
-
 from features_helpers import score_differences, link_db
 
 

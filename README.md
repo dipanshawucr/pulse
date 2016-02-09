@@ -8,7 +8,7 @@ Change `preprocess/preprocess_settings.json` and `features/features_settings.jso
 * BLAST is required in the preprocessing step after alternative splice site extraction
 * last step of the preprocessing step requires the [biopython package](https://github.com/biopython/biopython)
 * disorderome scoring step of feature extraction step requires iupred
-* domain scoring requires pfam
+* domain scoring requires [pfam] (http://www.vcru.wisc.edu/simonlab/bioinformatics/programs/install/pfamscan.htm) 
 * perl is required for some scripts in feature extraction and in last step
 * sable is required in the last step of feature extraction
 
