@@ -38,7 +38,7 @@ def transform_score(score):
         return "*"
 
 
-def generate_disorder_for(filename, feature_extract_output_path,
+def generate_iupred_file(filename, feature_extract_output_path,
                           iupred_install_path, output_location):
     prot_seq = ''
     prot_id = ''

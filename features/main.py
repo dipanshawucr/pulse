@@ -1,9 +1,11 @@
 import json
+import time
 from features.features_helpers import create_paths_for_cell_line
 from features.uniprot_transmem import get_transmembrane_region_features
 from features.uniprot_ptm import get_postranscriptional_modification_features
 from features.uniprot_elm_read import get_uniprot_elm_features
-from features.generate_iupred_file import generate_disorder_for
+from features.generate_iupred_file import generate_iupred_file
+from features.uniprot_disorder import get_uniprot_disorder_features
 from helpers.normalize_unicode_data import normalize_unicode_data
 
 
@@ -25,7 +27,7 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
     get_transmembrane_region_features(uniprot_exon_indices_location, uniprot_tm_indices_db_location,
                                       uniprot_tm_read_output_location)
     print "Finished getting transmembrane region features."
-
+    time.sleep(2)
     ################
     # PTM FEATURES #
     ################
@@ -55,7 +57,7 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
     p_seq_output_location = preprocess_input_path + '/p_seq_isoforms.fas'
     iupred_isoforms_output_location = feature_extract_output_path + '/iupred_isoforms.out'
     iupred_install_path = normalize_unicode_data(features_settings["IUPRED_INSTALL_PATH"])
-    generate_disorder_for(p_seq_output_location, feature_extract_output_path,
+    generate_iupred_file(p_seq_output_location, feature_extract_output_path,
                           iupred_install_path, iupred_isoforms_output_location)
     print "Now done running helper file for disorderome."
 
@@ -64,5 +66,8 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
     ########################
 
     print "Now getting disorderome features..."
-
+    canonical_db_location = pulse_path + '/input/info_canonical_v3.ddbb'
+    disorder_read_out_location = feature_extract_output_path + '/disorder_read.out'
+    get_uniprot_disorder_features(pulse_path, uniprot_exon_indices_location, iupred_isoforms_output_location,
+                                  canonical_db_location, disorder_read_out_location)
     print "Finished getting disorderome features."

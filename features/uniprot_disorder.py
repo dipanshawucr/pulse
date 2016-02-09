@@ -1,54 +1,12 @@
 # reads uniprot disorder file and generates disorder features
 # do absolute disorder as well
-import sys
-import os
-import sqlite3
 
-
-def score_differences(mapping, uniprot, start, end):
-    try:
-        count = 0
-        if start <= end:
-            for i in range(start, end + 1):
-                if mapping[uniprot.strip()][i] == "*":
-                    count = count + 1
-            count = (1.0 * count) / (end - start + 1)
-
-        return count
-
-    except KeyError, e:
-        print 'WARNING!: Features not found '
-        print  str(e), uniprot
-        print 'Please check ID tags or/and generate the missing features'
-
-
-def link_db(db_path):
-    """
-    Initializes database connection
-
-    :param db_path:
-    :return:
-    """
-
-    try:
-        db = sqlite3.connect(db_path)
-    except sqlite3.Error, errmsg:
-        print 'DB not available ' + str(errmsg)
-        sys.exit()
-
-    db_cursor = db.cursor()
-    return db_cursor, db
+from features_helpers import score_differences, link_db
 
 
 def fetch_feature(feature, anchors_map, path_ddbb):
-    # connect ddbb
-    # global DDBB
-    # print path_ddbb
     (c, db) = link_db(path_ddbb)
-
-    # Init Var
     dict_feature = {}
-
     for anchor in anchors_map:
         # print anchor
         query = c.execute(""" SELECT * FROM %s WHERE id='%s' """ % (feature, anchor.strip()))
@@ -64,134 +22,86 @@ def fetch_feature(feature, anchors_map, path_ddbb):
             else:
                 dict_feature[uniprot_id] = {index: value}
     c.close()
-
     return dict_feature
 
-if __name__ == "__main__":
 
-    # PATH VARIABLE
-    try:
-        PulsePATH = os.environ['PULSE_PATH']
-    except KeyError:
-        print 'ENVIOROMENT VARIABLE PULSE_PATH not set up'
-        print 'TRYNG WITH WORKING DIR'
-        PulsePATH = os.getcwd()
-
-    # INPUT FILES
-    try:
-        map_file = sys.argv[1]
-        iupred_output = sys.argv[2]
-        # readFrom1 = open(map_file, 'r')
-        assert open(map_file, 'r')
-        assert open(iupred_output, 'r')
-        canonical_ddbb = PulsePATH + '/src_features/database/info_canonical_v3.ddbb'
-        print "Directory of database being used: " + canonical_ddbb
-
-    except IndexError:
-        print 'Map and iupred output files must be provided'
-        sys.exit()
-
-    # OUTPUT FILES
-    writeTo = open('./output/disorder_read.out', 'w')
-
-    # Init VARs
-    uniprot_to_index_to_disorder = {}
-    anchors_map = []
-
-    # Load IUPred info from anchor in ddbb
-    # Load anchor ids
-    readFrom1 = open(map_file, 'r')
-    for line in readFrom1:
+def build_anchors_map(map_file, anchors_map=list()):
+    uniprot_exon_indices = open(map_file, 'r')
+    for line in uniprot_exon_indices:
         tokens = line.split('\t')
         prot = tokens[1]
         anchors_map.append(prot)
-    readFrom1.close()
+    uniprot_exon_indices.close()
+    return anchors_map
 
-    uniprot_to_index_to_disorder = fetch_feature('uniprot_iupred', anchors_map, canonical_ddbb)
 
-    readFrom = open(iupred_output, 'r')
-    for line in readFrom:
-        print line
+def build_uniprot_to_index_to_disorder(iupred_output, index_to_disorder):
+    iupred_output_file = open(iupred_output, 'r')
+    for line in iupred_output_file:
         tokens = line.split('\t')
-
         if len(tokens) > 1:
             try:
-                # PARSING ID
                 prot = tokens[0]
-                # Customize here if you want to mod the label
-                # if "TCONS" in prot:
-                # 	prot = prot.split('_')[0]
-                # PARSING ID
                 index = int(tokens[1])
                 disordered = tokens[2].strip()
-
-                if uniprot_to_index_to_disorder.has_key(prot):
-                    uniprot_to_index_to_disorder[prot][index] = disordered
+                if prot in index_to_disorder:
+                    index_to_disorder[prot][index] = disordered
                 else:
-                    uniprot_to_index_to_disorder[prot] = {index: disordered}
+                    index_to_disorder[prot] = {index: disordered}
             except ValueError:
                 print "Cannot parse: " + line[0:len(line) - 1]
+    iupred_output_file.close()
+    return index_to_disorder
 
-    readFrom.close()
 
-    # print uniprot_to_index_to_disorder
-    # sys.exit()
-    readFrom1 = open(map_file, 'r')
-    for line in readFrom1:
+def get_uniprot_disorder_features(pulse_path, map_file, iupred_output,
+                                  canonical_db_location, disorder_read_out_location):
+
+    anchors_map = build_anchors_map(map_file)
+    uniprot_to_index_to_disorder = fetch_feature('uniprot_iupred', anchors_map, canonical_db_location)
+    uniprot_to_index_to_disorder = build_uniprot_to_index_to_disorder(iupred_output, uniprot_to_index_to_disorder)
+
+    write_to = open(disorder_read_out_location, 'w')
+    uniprot_exon_indices = open(map_file, 'r')
+    for line in uniprot_exon_indices:
         tokens = line.split('\t')
-        # print "inside"
-        # print >>writeTo,'works'
-        # PARSING ID
-        # Customize the line below if is need it
-        # it depends of how it is the label of th events
-        # This is ready for the default format label splicing plus lenght of the exons -> X.LABEL-###_33=33=33
-        # PARSING ID
         asid = tokens[0]  # .split("_")[0]
         prot = tokens[1]
         sstart = int(tokens[2])
         start = int(tokens[3])
         end = int(tokens[4])
         eend = int(tokens[5])
-
-        roughALength = int(int(tokens[0].split("_")[-1].split("=")[1]) / 3)
-
+        rough_a_length = int(int(tokens[0].split("_")[-1].split("=")[1]) / 3)
         if asid[0] == "I":
-            roughALength = 0
-
-        c1Count = 0
-        aCount = 0
-        c2Count = 0
-        canonicalAbsolute = 0
-        otherAbsolute = 0
-        otherA = 0
-
-        if not uniprot_to_index_to_disorder.has_key(prot):
-            print prot
-            c1Count = 0
-            aCount = 0
-            c2Count = 0
-            canonicalAbsolute = 0
-            otherAbsolute = 0
-            otherA = 0
+            rough_a_length = 0
+        c1_count = 0
+        a_count = 0
+        c2_count = 0
+        canonical_absolute = 0
+        other_absolute = 0
+        other_a = 0
+        if prot not in uniprot_to_index_to_disorder:
+            print "Protein not in uniprot_to_index_to_disorder: ", prot
+            c1_count = 0
+            a_count = 0
+            c2_count = 0
+            canonical_absolute = 0
+            other_absolute = 0
+            other_a = 0
         else:
-            c1Count = score_differences(uniprot_to_index_to_disorder, prot, sstart, start)
-            aCount = score_differences(uniprot_to_index_to_disorder, prot, start, end)
-            c2Count = score_differences(uniprot_to_index_to_disorder, prot, end, eend)
+            c1_count = score_differences(uniprot_to_index_to_disorder, prot, sstart, start)
+            a_count = score_differences(uniprot_to_index_to_disorder, prot, start, end)
+            c2_count = score_differences(uniprot_to_index_to_disorder, prot, end, eend)
+            prot_len = int(line.split("\t")[7].strip())
+            other_prot = asid  # or token[0] Customize this line if is need it for test [asid+'//'+prot+'-ST']
+            other_prot_len = int(line.split("\t")[8].strip())
+            canonical_absolute = score_differences(uniprot_to_index_to_disorder, prot, 1, prot_len)
+            other_absolute = score_differences(uniprot_to_index_to_disorder, other_prot, 1, other_prot_len)
+            other_a_end = start + rough_a_length
 
-            # use teh new prot length provided
-            protLen = int(line.split("\t")[7].strip())
-            otherProt = asid  # or token[0] Customize this line if is need it for test [asid+'//'+prot+'-ST']
-            otherProtLen = int(line.split("\t")[8].strip())
-
-            canonicalAbsolute = score_differences(uniprot_to_index_to_disorder, prot, 1, protLen)
-            otherAbsolute = score_differences(uniprot_to_index_to_disorder, otherProt, 1, otherProtLen)
-
-            otherAEnd = start + roughALength
-            if otherAEnd > otherProtLen:
-                otherAEnd = otherProtLen
-            # print line.strip()
-
-            otherA = score_differences(uniprot_to_index_to_disorder, otherProt, start, otherAEnd)
-
-        print >> writeTo, tokens[0] + "\t" + prot + "\t" + repr(c1Count) + "\t" + repr(aCount) + "\t" + repr(
-            c2Count) + "\t" + repr(canonicalAbsolute) + "\t" + repr(otherAbsolute) + "\t" + repr(otherA)
+            if other_a_end > other_prot_len:
+                other_a_end = other_prot_len
+            otherA = score_differences(uniprot_to_index_to_disorder, other_prot, start, other_a_end)
+        print >> write_to, tokens[0] + "\t" + prot + "\t" + repr(c1_count) + "\t" + repr(a_count) + "\t" + repr(
+            c2_count) + "\t" + repr(canonical_absolute) + "\t" + repr(other_absolute) + "\t" + repr(other_a)
+    write_to.close()

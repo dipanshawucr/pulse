@@ -20,6 +20,7 @@ if __name__ == "__main__":
     ##########################
     # SAMTOOLS AND CUFFLINKS #
     ##########################
+
     proceed_to_samtools_cufflinks = raw_input("Press Y to proceed to cufflinks and samtools: ")
     if proceed_to_samtools_cufflinks == 'Y':
         for cell_line in all_cell_lines:
