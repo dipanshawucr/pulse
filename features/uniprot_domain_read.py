@@ -1,18 +1,11 @@
 # reads uniprot domain file and generates domain features
-import sys
 from features_helpers import link_db, score_differences_pfam
+import time
 
 
 def fetch_feature(feature, anchor, path_ddbb):
-    # connect ddbb
-    # global DDBB
-    # print path_ddbb
     (c, db) = link_db(path_ddbb)
-
-    # Init Var
     pfam_hits = []
-    # for anchor in anchors_map:
-    # print anchor
     query = c.execute(""" SELECT * FROM %s WHERE id='%s' """ % (feature, anchor))
     # query = c.execute("""SELECT * FROM uniprot_ptms WHERE uniprot_id = "Q8IZP0" """)
     # Row_id Uniprot_id postion Value ['*'] in pfam ['*',enzymatic bool]
@@ -26,149 +19,121 @@ def fetch_feature(feature, anchor, path_ddbb):
     return pfam_hits
 
 
-def get_uniprot_domain_read(f_pfam_special_db_location, canonical_db_location):
-
-    try:
-        f_pfam_special_db = open(f_pfam_special_db_location, 'r')
-        # readFrom3 = open(PulsePATH+'/param_files/pfam_scan_uniprot.inp', 'r')
-        map_file = sys.argv[1]
-        pfamscan_output = sys.argv[2]
-
-        assert open(map_file, 'r')
-        pfamscan_output_isoforms = open(pfamscan_output, 'r')
-        canonical_ddbb = PulsePATH + '/src_features/database/info_canonical_v3.ddbb'
-    # canonical_ddbb = PulsePATH+'/database/pulse_canonical_v2.ddbb'
-
-    except IndexError:
-        print 'Map and pfamscan output files must be provided'
-        sys.exit()
-
-    # OUTPUT FILES
-    writeTo = open('domain_read.out', 'w')
-
-    # Init VARs
-    uniprot_to_index_to_domain = {}
+def extract_from_pfam_special_db(f_pfam_special_db):
     pfam_special = {}
-
-    # MAIN
-
     for line in f_pfam_special_db:
         tokens = line.split()
         pfam = tokens[1]
         pfam_special[pfam] = True
     f_pfam_special_db.close()
+    return pfam_special
 
+
+def build_uniprot_to_index_domain(pfamscan_output_isoforms, pfam_special):
+    uniprot_to_index_to_domain = {}
     for line in pfamscan_output_isoforms:
-        tokens = line.split()
-        # print tokens
-        try:
-            asid = tokens[0]
+        if line[0] != "#" and line[0] != " ":
+            tokens = line.split()
+            try:
+                asid = tokens[0]
+                start = int(tokens[1])
+                end = int(tokens[2])
+                pfam = tokens[5].split(".")[0]
+                enzymatic = pfam in pfam_special
+                for i in range(start, end + 1):
+                    if asid in uniprot_to_index_to_domain:
+                        uniprot_to_index_to_domain[asid][i] = ["*", enzymatic]
+                    else:
+                        uniprot_to_index_to_domain[asid] = {i: ["*", enzymatic]}
+            except ValueError:
+                print "Cannot parse: " + line[0:len(line) - 1]
+            except IndexError:
+                print "Index Error: " + line.strip()
+    return uniprot_to_index_to_domain
 
-            # if "|" in uniprot:
-            # 	uniprot = uniprot.split("|")[1]
 
-            start = int(tokens[1])
-            end = int(tokens[2])
+def get_uniprot_domain_read(f_pfam_special_db_location, canonical_db_location, map_file, pfamscan_output,
+                            domain_read_output_location):
+    f_pfam_special_db = open(f_pfam_special_db_location, 'r')
+    pfamscan_output_isoforms = open(pfamscan_output, 'r')
+    write_to = open(domain_read_output_location, 'w')
 
-            pfam = tokens[5].split(".")[0]
-            enzymatic = pfam_special.has_key(pfam)
+    pfam_special = extract_from_pfam_special_db(f_pfam_special_db)
+    uniprot_to_index_to_domain = build_uniprot_to_index_domain(pfamscan_output_isoforms, pfam_special)
 
-            for i in range(start, end + 1):
-                if uniprot_to_index_to_domain.has_key(asid):
-                    uniprot_to_index_to_domain[asid][i] = ["*", enzymatic]
-                else:
-                    uniprot_to_index_to_domain[asid] = {i: ["*", enzymatic]}
-
-        except ValueError:
-            print "Cannot parse: " + line[0:len(line) - 1]
-        except IndexError:
-            print "Index Error: " + line.strip()
-
-    print len(uniprot_to_index_to_domain)
-    # print 'normal'
-    # load pfam info anchors
     index_file = open(map_file, 'r')
     for line in index_file:
         tokens = line.split()
-        # PARSING ID
-        # Customize the line below if is need it
-        # it depends of how it is the label of th events
-        # This is ready for the default format label splicing plus lenght of the exons -> X.LABEL-###_33=33=33
-
-        asid = tokens[0]  # .split("_")[0]
+        asid = tokens[0]
         prot = tokens[1]
-        pfams = fetch_feature('uniprot_pfams', prot, canonical_ddbb)
+        pfams = fetch_feature('uniprot_pfams', prot, canonical_db_location)
         for hit in pfams:
             start = hit[1]
             end = hit[2]
             pfam = hit[3]
-            enzymatic = pfam_special.has_key(pfam)
-
+            enzymatic = pfam in pfam_special
             for i in range(start, end + 1):
-                if uniprot_to_index_to_domain.has_key(prot):
+                if prot in uniprot_to_index_to_domain:
                     uniprot_to_index_to_domain[prot][i] = ["*", enzymatic]
                 else:
                     uniprot_to_index_to_domain[prot] = {i: ["*", enzymatic]}
-
     index_file.close()
-    print len(uniprot_to_index_to_domain)
+
     # Generate Features
     index_file = open(map_file, 'r')
     for line in index_file:
         tokens = line.split()
-        # PARSING ID
-        # Customize the line below if is need it
-        # it depends of how it is the label of th events
-        # This is ready for the default format label splicing plus lenght of the exons -> X.LABEL-###_33=33=33
-
-        asid = tokens[0]  # .split("_")[0]
+        asid = tokens[0]
         prot = tokens[1]
-        # PARSING ID
+
         sstart = int(tokens[2])
         start = int(tokens[3])
         end = int(tokens[4])
         eend = int(tokens[5])
 
-        roughALength = int(int(tokens[0].split("_")[-1].split("=")[1]) / 3)
+        rough_a_length = int(int(tokens[0].split("_")[-1].split("=")[1]) / 3)
 
         if asid[0] == "I":
-            roughALength = 0
+            rough_a_length = 0
 
         c1Count = 0
-        aCount = 0
-        c2Count = 0
-        canonicalAbsolute = 0
-        otherAbsolute = 0
+        a_count = 0
+        c2_count = 0
+        canonical_absolute = 0
+        other_absolute = 0
         otherA = 0
 
-        if not uniprot_to_index_to_domain.has_key(prot):
-            c1Count = 0
-            aCount = 0
-            c2Count = 0
-            canonicalAbsolute = 0
-            otherAbsolute = 0
-            otherA = 0
+        if prot not in uniprot_to_index_to_domain:
+            c1_count = 0
+            a_count = 0
+            c2_count = 0
+            canonical_absolute = 0
+            other_absolute = 0
+            other_a = 0
             enzymatic = 0
         else:
-            c1Count = score_differences_pfam(uniprot_to_index_to_domain, prot, sstart, start)[0]
-            aCount = score_differences_pfam(uniprot_to_index_to_domain, prot, start, end)[0]
-            c2Count = score_differences_pfam(uniprot_to_index_to_domain, prot, end, eend)[0]
-
+            c1_count = score_differences_pfam(uniprot_to_index_to_domain, prot, sstart, start)[0]
+            a_count = score_differences_pfam(uniprot_to_index_to_domain, prot, start, end)[0]
+            c2_count = score_differences_pfam(uniprot_to_index_to_domain, prot, end, eend)[0]
             enzymatic = score_differences_pfam(uniprot_to_index_to_domain, prot, start, end)[1]
 
-            # use teh new prot length provided
-            protLen = int(line.split("\t")[7].strip())
-            otherProt = asid  # or token[0] Customize this line if is need it for test [asid+'//'+prot+'-ST']
-            otherProtLen = int(line.split("\t")[8].strip())
-            canonicalAbsolute = score_differences_pfam(uniprot_to_index_to_domain, prot, 1, protLen)[0]
-            otherAbsolute = score_differences_pfam(uniprot_to_index_to_domain, otherProt, 1, otherProtLen)[0]
+            prot_len = int(line.split("\t")[7].strip())
+            other_prot = asid
+            other_prot_len = int(line.split("\t")[8].strip())
+            print uniprot_to_index_to_domain[other_prot]
+            print prot_len, other_prot, other_prot_len
+            canonical_absolute = score_differences_pfam(uniprot_to_index_to_domain, prot, 1, prot_len)[0]
+            print "Score_DIFF: ", score_differences_pfam(uniprot_to_index_to_domain, other_prot, 1, other_prot_len)[0]
+            other_absolute = score_differences_pfam(uniprot_to_index_to_domain, other_prot, 1, other_prot_len)[0]
 
-            otherAEnd = start + roughALength
-            if otherAEnd > otherProtLen:
-                otherAEnd = otherProtLen
+            other_a_end = start + rough_a_length
+            if other_a_end > other_prot_len:
+                other_a_end = other_prot_len
 
-            otherA = score_differences_pfam(uniprot_to_index_to_domain, otherProt, start, otherAEnd)[0]
+            other_a = score_differences_pfam(uniprot_to_index_to_domain, other_prot, start, other_a_end)[0]
 
-        print >> writeTo, tokens[0] + "\t" + prot + "\t" + repr(c1Count) + "\t" + repr(aCount) + "\t" + repr(
-            c2Count) + "\t" + repr(canonicalAbsolute) + "\t" + repr(otherAbsolute) + "\t" + repr(otherA) + "\t" + repr(
-            enzymatic)
+        print >> write_to, tokens[0] + "\t" + prot + "\t" + repr(c1_count) + "\t" + repr(a_count) + "\t" + repr(
+            c2_count) + "\t" + repr(canonical_absolute) + "\t" + repr(other_absolute) + "\t" + repr(other_a) + "\t" + \
+                           repr(enzymatic)
+
+    write_to.close()

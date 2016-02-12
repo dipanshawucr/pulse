@@ -54,7 +54,6 @@ def score_differences_pfam(mapping, uniprot, start, end):
                             enzymatic = 1
                         count += 1
                 return [(1.0 * count) / (end - start + 1), enzymatic]
-
     except KeyError, e:
         print 'WARNING!: Features not found for'
         print  str(e)

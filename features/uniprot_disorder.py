@@ -100,7 +100,7 @@ def get_uniprot_disorder_features(pulse_path, map_file, iupred_output,
 
             if other_a_end > other_prot_len:
                 other_a_end = other_prot_len
-            otherA = score_differences(uniprot_to_index_to_disorder, other_prot, start, other_a_end)
+            other_a = score_differences(uniprot_to_index_to_disorder, other_prot, start, other_a_end)
         print >> write_to, tokens[0] + "\t" + prot + "\t" + repr(c1_count) + "\t" + repr(a_count) + "\t" + repr(
             c2_count) + "\t" + repr(canonical_absolute) + "\t" + repr(other_absolute) + "\t" + repr(other_a)
     write_to.close()

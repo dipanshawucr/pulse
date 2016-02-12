@@ -24,7 +24,7 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
     # #########################
     #
     # print "Now getting transmembrane region features..."
-    # uniprot_exon_indices_location = preprocess_input_path + '/uniprot_exon_indices_map.out'
+    uniprot_exon_indices_location = preprocess_input_path + '/uniprot_exon_indices_map.out'
     #
     # uniprot_tm_indices_db_location = normalize_unicode_data(features_settings["F_UNIPROT_TRANSMEM_INDICES_LOCATION"])
     # uniprot_tm_read_output_location = feature_extract_output_path + '/transmem_read.out'
@@ -59,7 +59,7 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
     #
     # print "Now running helper files for disorderome..."
     # p_seq_output_location = preprocess_input_path + '/p_seq_isoforms.fas'
-    # iupred_isoforms_output_location = feature_extract_output_path + '/iupred_isoforms.out'
+    iupred_isoforms_output_location = feature_extract_output_path + '/iupred_isoforms.out'
     # iupred_install_path = normalize_unicode_data(features_settings["IUPRED_INSTALL_PATH"])
     # generate_iupred_file(p_seq_output_location, feature_extract_output_path,
     #                       iupred_install_path, iupred_isoforms_output_location)
@@ -87,13 +87,17 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
     hmmer3_data_location = normalize_unicode_data(features_settings["HMMER3_DATA_LOCATION"])
     pfam_exit_code = start_pfam_scan(pfam_scan_script_location, pfam_input_location,
                                      pfam_output_location, hmmer3_data_location)
-    if pfam_exit_code == 0:
-        print "pfam_scan successful"
-        time.sleep(3)
-        print "Now getting uniprot domain features..."
-        f_pfam_special_db_location = normalize_unicode_data(features_settings["F_PFAM_SPECIAL_LOCATION"])
-        get_uniprot_domain_read(f_pfam_special_db_location, canonical_db_location)
-        print "Finished getting uniprot domain features."
-    else:
-        print "pfam_scan failed"
-        exit()
+    # pfam_exit_code = 0
+    # if pfam_exit_code == 0:
+    #     print "pfam_scan successful"
+    #     time.sleep(3)
+    #     print "Now getting uniprot domain features..."
+    #     f_pfam_special_db_location = normalize_unicode_data(features_settings["F_PFAM_SPECIAL_LOCATION"])
+    #     domain_read_output_location = preprocess_input_path + '/domain_read.out'
+    #     get_uniprot_domain_read(f_pfam_special_db_location, canonical_db_location, uniprot_exon_indices_location,
+    #                             pfam_output_location, domain_read_output_location)
+    #     print "Finished getting uniprot domain features."
+    #
+    # else:
+    #     print "pfam_scan failed"
+    #     exit()
