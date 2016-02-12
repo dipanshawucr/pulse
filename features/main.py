@@ -10,6 +10,7 @@ from features.uniprot_domain_read import get_uniprot_domain_read
 from features.run_pfam_scan import start_pfam_scan
 from features.uniprot_core import get_sable_scores
 from features.mutation_features import get_mutation_features
+from features.conservation_conversion_query import create_query_file
 from helpers.normalize_unicode_data import normalize_unicode_data
 
 
@@ -116,9 +117,21 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
         # print "Now getting mutation scores..."
         # f_mutations_db_location = normalize_unicode_data(features_settings["F_MUTATIONS_LOCATION"])
         # mutation_features_output_location = feature_extract_output_path + '/mutation_read.out'
-        # get_mutation_features(uniprot_exon_indices_location, f_mutations_db_location, mutation_features_output_location)
+        # get_mutation_features(uniprot_exon_indices_location, f_mutations_db_location,
+        #                       mutation_features_output_location)
         # print "Finished getting mutation scores."
 
+        # #################################
+        # # CONSERVATION/NETWORK FEATURES #
+        # #################################
+        print "Creating query file conservation/network features..."
+        conservation_query_output_location = feature_extract_output_path + '/conservation_query.txt'
+        as_location_file = preprocess_input_path + '/as_location.out'
+        create_query_file(as_location_file, conservation_query_output_location)
+        print "Finished creating query file."
+
+        # TODO: Talk to API for conservation to get report_conservationQuery.txt
+        print ""
     else:
         print "pfam_scan failed"
         exit()
