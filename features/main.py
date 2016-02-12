@@ -130,7 +130,8 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
         create_query_file(as_location_file, conservation_query_output_location)
         print "Finished creating query file."
 
-        # TODO: Talk to API for conservation to get report_conservationQuery.txt
+        # TODO: Use remap_api.pl for conservation to get report_conservationQuery.txt
+        print ""
         print ""
     else:
         print "pfam_scan failed"
