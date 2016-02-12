@@ -5,5 +5,6 @@
   "IUPRED_INSTALL_PATH": "/home/wonjunetai/Documents/KimLab/tools/iupred/iupred",
   "HMMER3_DATA_LOCATION": "/usr/local/bin/hmmer3/data",
   "F_PFAM_SPECIAL_LOCATION": "/home/wonjunetai/Documents/KimLab/pulse/input/param_files/F_pfam_special.inp",
-  "F_SABLE_LOCATION": "/home/wonjunetai/Documents/KimLab/pulse/input/param_files/F_sable.inp"
+  "F_SABLE_LOCATION": "/home/wonjunetai/Documents/KimLab/pulse/input/param_files/F_sable.inp",
+  "F_MUTATIONS_LOCATION": "/home/wonjunetai/Documents/KimLab/pulse/input/param_files/F_mutations.inp"
 }

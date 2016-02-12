@@ -9,6 +9,7 @@ from features.uniprot_disorder import get_uniprot_disorder_features
 from features.uniprot_domain_read import get_uniprot_domain_read
 from features.run_pfam_scan import start_pfam_scan
 from features.uniprot_core import get_sable_scores
+from features.mutation_features import get_mutation_features
 from helpers.normalize_unicode_data import normalize_unicode_data
 
 
@@ -98,23 +99,25 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
         #                         pfam_output_location, domain_read_output_location)
         # print "Finished getting uniprot domain features."
 
-        #################
-        # SABLE SCORING #
-        #################
+        # #################
+        # # SABLE SCORING #
+        # #################
+        #
+        # print "Now getting features for SABLE..."
+        # f_sable_db_location = normalize_unicode_data(features_settings["F_SABLE_LOCATION"])
+        # uniprot_core_output_location = feature_extract_output_path + '/core_read.out'
+        # get_sable_scores(uniprot_exon_indices_location, f_sable_db_location, uniprot_core_output_location)
+        # print "Finished getting features for SABLE."
 
-        print "Now getting features for SABLE..."
-        f_sable_db_location = normalize_unicode_data(features_settings["F_SABLE_LOCATION"])
-        uniprot_core_output_location = feature_extract_output_path + '/core_read.out'
-        get_sable_scores(uniprot_exon_indices_location, f_sable_db_location, uniprot_core_output_location)
-        print "Finished getting features for SABLE."
-
-        ####################
-        # MUTATION SCORING #
-        ####################
-
-        print "Now getting mutation scores..."
-
-        print "Finished getting mutation scores."
+        # ####################
+        # # MUTATION SCORING #
+        # ####################
+        #
+        # print "Now getting mutation scores..."
+        # f_mutations_db_location = normalize_unicode_data(features_settings["F_MUTATIONS_LOCATION"])
+        # mutation_features_output_location = feature_extract_output_path + '/mutation_read.out'
+        # get_mutation_features(uniprot_exon_indices_location, f_mutations_db_location, mutation_features_output_location)
+        # print "Finished getting mutation scores."
 
     else:
         print "pfam_scan failed"
