@@ -38,6 +38,7 @@ def score_differences(mapping, uniprot, start, end):
         print 'WARNING!: Features not found '
         print str(e)
         print 'Please check ID tags or/and generate the missing features'
+    return count
 
 
 def score_differences_pfam(mapping, uniprot, start, end):
@@ -58,6 +59,7 @@ def score_differences_pfam(mapping, uniprot, start, end):
         print 'WARNING!: Features not found for'
         print  str(e)
         print 'Please check ID tags or/and generate the missing features'
+    return [count, 0]
 
 
 # Used in features.uniprot_disorder

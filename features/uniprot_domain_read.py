@@ -32,7 +32,7 @@ def extract_from_pfam_special_db(f_pfam_special_db):
 def build_uniprot_to_index_domain(pfamscan_output_isoforms, pfam_special):
     uniprot_to_index_to_domain = {}
     for line in pfamscan_output_isoforms:
-        if line[0] != "#" and line[0] != " ":
+        if line[0] != "#" and line.strip() != "":
             tokens = line.split()
             try:
                 asid = tokens[0]
@@ -85,7 +85,6 @@ def get_uniprot_domain_read(f_pfam_special_db_location, canonical_db_location, m
         tokens = line.split()
         asid = tokens[0]
         prot = tokens[1]
-
         sstart = int(tokens[2])
         start = int(tokens[3])
         end = int(tokens[4])
@@ -95,13 +94,6 @@ def get_uniprot_domain_read(f_pfam_special_db_location, canonical_db_location, m
 
         if asid[0] == "I":
             rough_a_length = 0
-
-        c1Count = 0
-        a_count = 0
-        c2_count = 0
-        canonical_absolute = 0
-        other_absolute = 0
-        otherA = 0
 
         if prot not in uniprot_to_index_to_domain:
             c1_count = 0
@@ -120,10 +112,7 @@ def get_uniprot_domain_read(f_pfam_special_db_location, canonical_db_location, m
             prot_len = int(line.split("\t")[7].strip())
             other_prot = asid
             other_prot_len = int(line.split("\t")[8].strip())
-            print uniprot_to_index_to_domain[other_prot]
-            print prot_len, other_prot, other_prot_len
             canonical_absolute = score_differences_pfam(uniprot_to_index_to_domain, prot, 1, prot_len)[0]
-            print "Score_DIFF: ", score_differences_pfam(uniprot_to_index_to_domain, other_prot, 1, other_prot_len)[0]
             other_absolute = score_differences_pfam(uniprot_to_index_to_domain, other_prot, 1, other_prot_len)[0]
 
             other_a_end = start + rough_a_length

@@ -8,6 +8,7 @@ from features.generate_iupred_file import generate_iupred_file
 from features.uniprot_disorder import get_uniprot_disorder_features
 from features.uniprot_domain_read import get_uniprot_domain_read
 from features.run_pfam_scan import start_pfam_scan
+from features.uniprot_core import get_sable_scores
 from helpers.normalize_unicode_data import normalize_unicode_data
 
 
@@ -80,24 +81,41 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
     # PFAM & DOMAIN FEATURES #
     ##########################
 
-    print "Now running pfam_scan..."
-    pfam_scan_script_location = pulse_path + '/helpers/pfam_scan.pl'
-    pfam_input_location = preprocess_input_path + '/p_seq_isoforms.fas'
-    pfam_output_location = feature_extract_output_path + '/pfam_done.out'
-    hmmer3_data_location = normalize_unicode_data(features_settings["HMMER3_DATA_LOCATION"])
-    pfam_exit_code = start_pfam_scan(pfam_scan_script_location, pfam_input_location,
-                                     pfam_output_location, hmmer3_data_location)
-    # pfam_exit_code = 0
-    # if pfam_exit_code == 0:
-    #     print "pfam_scan successful"
-    #     time.sleep(3)
-    #     print "Now getting uniprot domain features..."
-    #     f_pfam_special_db_location = normalize_unicode_data(features_settings["F_PFAM_SPECIAL_LOCATION"])
-    #     domain_read_output_location = preprocess_input_path + '/domain_read.out'
-    #     get_uniprot_domain_read(f_pfam_special_db_location, canonical_db_location, uniprot_exon_indices_location,
-    #                             pfam_output_location, domain_read_output_location)
-    #     print "Finished getting uniprot domain features."
-    #
-    # else:
-    #     print "pfam_scan failed"
-    #     exit()
+    # print "Now running pfam_scan..."
+    # pfam_scan_script_location = pulse_path + '/helpers/pfam_scan.pl'
+    # pfam_input_location = preprocess_input_path + '/p_seq_isoforms.fas'
+    # pfam_output_location = feature_extract_output_path + '/pfam_done.out'
+    # hmmer3_data_location = normalize_unicode_data(features_settings["HMMER3_DATA_LOCATION"])
+    # pfam_exit_code = start_pfam_scan(pfam_scan_script_location, pfam_input_location,
+    #                                  pfam_output_location, hmmer3_data_location)
+    pfam_exit_code = 0
+    if pfam_exit_code == 0:
+        # print "pfam_scan successful"
+        # print "Now getting uniprot domain features..."
+        # f_pfam_special_db_location = normalize_unicode_data(features_settings["F_PFAM_SPECIAL_LOCATION"])
+        # domain_read_output_location = feature_extract_output_path + '/domain_read.out'
+        # get_uniprot_domain_read(f_pfam_special_db_location, canonical_db_location, uniprot_exon_indices_location,
+        #                         pfam_output_location, domain_read_output_location)
+        # print "Finished getting uniprot domain features."
+
+        #################
+        # SABLE SCORING #
+        #################
+
+        print "Now getting features for SABLE..."
+        f_sable_db_location = normalize_unicode_data(features_settings["F_SABLE_LOCATION"])
+        uniprot_core_output_location = feature_extract_output_path + '/core_read.out'
+        get_sable_scores(uniprot_exon_indices_location, f_sable_db_location, uniprot_core_output_location)
+        print "Finished getting features for SABLE."
+
+        ####################
+        # MUTATION SCORING #
+        ####################
+
+        print "Now getting mutation scores..."
+
+        print "Finished getting mutation scores."
+
+    else:
+        print "pfam_scan failed"
+        exit()

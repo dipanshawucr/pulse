@@ -21,10 +21,10 @@ def build_uniprot_to_index_to_core(sable_db_obj):
     return uniprot_to_index_to_core
 
 
-def get_sable_scores(map_file, f_sable_db_location):
+def get_sable_scores(map_file, f_sable_db_location, uniprot_core_output_location):
     map_file_obj = open(map_file, 'r')
     sable_db_obj = open(f_sable_db_location, 'r')
-    write_to = open('core_read.out', 'w')
+    write_to = open(uniprot_core_output_location, 'w')
 
     uniprot_to_index_to_core = build_uniprot_to_index_to_core(sable_db_obj)
 
