@@ -38,9 +38,13 @@ def generate_network_features(f_uniprot_genewiki_location, f_degree_location, ma
 
     # LOAD degree File select matches and print score
     for line in f_degree_db:
+        print line
         tokens = line.split(",")
+
         name = tokens[1].strip()
         score = tokens[2].strip()
+        print name, score
         if name in name_to_unigene:
+            print "NAME: ", name
             as_id = name_to_unigene[name]
             print >> write_to, as_id + "\t" + score
