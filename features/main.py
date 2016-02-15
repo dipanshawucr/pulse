@@ -13,6 +13,7 @@ from features.mutation_features import get_mutation_features
 from features.conservation_conversion_query import create_query_file
 from features.convert_from_hg19_hg18 import use_remap_api
 from features.seq_conserv import generate_sequence_conservation_features
+from features.event_conserv import generate_event_conservation_feature_table
 from helpers.normalize_unicode_data import normalize_unicode_data
 
 
@@ -145,14 +146,22 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
 
         remap_exit_code = 0
         if remap_exit_code == 0:
-            print "Now generating sequence conservation features..."
+            # print "Now generating sequence conservation features..."
             f_phastcons_db_location = normalize_unicode_data(features_settings["F_PHASTCONS_HG18_BED_LOCATION"])
             as_location_file = preprocess_input_path + '/as_location.out'
             remapped_coordinates_file = feature_extract_output_path + '/report_conservationQuery.txt'
-            sequence_conservation_output_location = feature_extract_output_path + '/sequenceCon_read.out'
-            generate_sequence_conservation_features(f_phastcons_db_location, as_location_file,
-                                                    remapped_coordinates_file, sequence_conservation_output_location)
-            print "Finished generating sequence conservation features."
+            # sequence_conservation_output_location = feature_extract_output_path + '/sequenceCon_read.out'
+            # generate_sequence_conservation_features(f_phastcons_db_location, as_location_file,
+            #                                         remapped_coordinates_file, sequence_conservation_output_location)
+            # print "Finished generating sequence conservation features."
+
+            print "Now generating event_conservation feature table..."
+            f_event_conservation_db_location = normalize_unicode_data(features_settings["F_EVENT_CONSERVATION_LOCATION"])
+            event_conservation_output = feature_extract_output_path + '/eventCon_read.out'
+            generate_event_conservation_feature_table(f_phastcons_db_location, f_event_conservation_db_location,
+                                                      as_location_file, remapped_coordinates_file,
+                                                      event_conservation_output)
+            print "Finished generating event_conservation feature table."
         else:
             print "Remapping failed"
             exit()
