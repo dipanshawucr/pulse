@@ -11,6 +11,7 @@ from features.run_pfam_scan import start_pfam_scan
 from features.uniprot_core import get_sable_scores
 from features.mutation_features import get_mutation_features
 from features.conservation_conversion_query import create_query_file
+from features.convert_from_hg19_hg18 import use_remap_api
 from helpers.normalize_unicode_data import normalize_unicode_data
 
 
@@ -124,16 +125,27 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
         # #################################
         # # CONSERVATION/NETWORK FEATURES #
         # #################################
-        print "Creating query file conservation/network features..."
+        # print "Creating query file conservation/network features..."
         conservation_query_output_location = feature_extract_output_path + '/conservation_query.txt'
-        as_location_file = preprocess_input_path + '/as_location.out'
-        create_query_file(as_location_file, conservation_query_output_location)
-        print "Finished creating query file."
+        # as_location_file = preprocess_input_path + '/as_location.out'
+        # create_query_file(as_location_file, conservation_query_output_location)
+        # print "Finished creating query file."
 
-        # TODO: Use remap_api.pl for conservation to get report_conservationQuery.txt. Get help from Carles on how to use.
-        # remap api is in helpers package!
-        print ""
-        print ""
+        print "Converting between hg19 to hg18 using the query file generated..."
+        remap_api_location = pulse_path + '/helpers/remap_api.pl'
+        remap_mode = "asm-asm"
+        remap_from = "GCF_000001405.13"
+        remap_to = "GCF_000001405.12"
+        remap_input_location = conservation_query_output_location
+        remap_output_location = feature_extract_output_path + '/report_conservationQuery.txt.xls'
+        remap_exit_code = use_remap_api(remap_api_location, remap_mode, remap_from, remap_to, remap_input_location, remap_output_location)
+        print "Conversion complete."
+
+        if remap_exit_code == 0:
+
+        else:
+            print "Remapping failed"
+            exit()
     else:
         print "pfam_scan failed"
         exit()

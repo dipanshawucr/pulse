@@ -11,6 +11,14 @@ Change `preprocess/preprocess_settings.json` and `features/features_settings.jso
 * disorderome scoring step of feature extraction step requires iupred
 * domain scoring requires [pfam] (http://www.vcru.wisc.edu/simonlab/bioinformatics/programs/install/pfamscan.htm) 
 * perl is required for some scripts in feature extraction and in last step
+* perl needs the following modules (download with `cpan <module name>`:
+    * Getopt::Long
+    * LWP::UserAgent
+    * HTTP::Request::Common qw(POST), qw(GET)
+    * HTTP::Headers
+    * XML::XPath
+    * XML::XPath::XMLParser
+    * JSON
 * sable is required in the last step of feature extraction
 
 ### SETUP
