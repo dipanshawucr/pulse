@@ -12,6 +12,7 @@ from features.uniprot_core import get_sable_scores
 from features.mutation_features import get_mutation_features
 from features.conservation_conversion_query import create_query_file
 from features.convert_from_hg19_hg18 import use_remap_api
+from features.seq_conserv import generate_sequence_conservation_features
 from helpers.normalize_unicode_data import normalize_unicode_data
 
 
@@ -126,23 +127,32 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
         # # CONSERVATION/NETWORK FEATURES #
         # #################################
         # print "Creating query file conservation/network features..."
-        conservation_query_output_location = feature_extract_output_path + '/conservation_query.txt'
+        # conservation_query_output_location = feature_extract_output_path + '/conservation_query.txt'
         # as_location_file = preprocess_input_path + '/as_location.out'
         # create_query_file(as_location_file, conservation_query_output_location)
         # print "Finished creating query file."
 
-        print "Converting between hg19 to hg18 using the query file generated..."
-        remap_api_location = pulse_path + '/helpers/remap_api.pl'
-        remap_mode = "asm-asm"
-        remap_from = "GCF_000001405.13"
-        remap_to = "GCF_000001405.12"
-        remap_input_location = conservation_query_output_location
-        remap_output_location = feature_extract_output_path + '/report_conservationQuery.txt.xls'
-        remap_exit_code = use_remap_api(remap_api_location, remap_mode, remap_from, remap_to, remap_input_location, remap_output_location)
-        print "Conversion complete."
+        # print "Converting between hg19 to hg18 using the query file generated..."
+        # remap_api_location = pulse_path + '/helpers/remap_api.pl'
+        # remap_mode = "asm-asm"
+        # remap_from = "GCF_000001405.13"
+        # remap_to = "GCF_000001405.12"
+        # remap_input_location = conservation_query_output_location
+        # remap_output_location = feature_extract_output_path + '/report_conservationQuery.txt.xls'
+        # remap_exit_code = use_remap_api(remap_api_location, remap_mode, remap_from, remap_to,
+        #                                 remap_input_location, remap_output_location)
+        # print "Conversion complete."
 
+        remap_exit_code = 0
         if remap_exit_code == 0:
-
+            print "Now generating sequence conservation features..."
+            f_phastcons_db_location = normalize_unicode_data(features_settings["F_PHASTCONS_HG18_BED_LOCATION"])
+            as_location_file = preprocess_input_path + '/as_location.out'
+            remapped_coordinates_file = feature_extract_output_path + '/report_conservationQuery.txt'
+            sequence_conservation_output_location = feature_extract_output_path + '/sequenceCon_read.out'
+            generate_sequence_conservation_features(f_phastcons_db_location, as_location_file,
+                                                    remapped_coordinates_file, sequence_conservation_output_location)
+            print "Finished generating sequence conservation features."
         else:
             print "Remapping failed"
             exit()
