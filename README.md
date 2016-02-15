@@ -1,5 +1,6 @@
 # pulse
-predicting protein stability
+predicting protein stability.
+This repo is a refactoring of @ccorbi's main pulse pipeline for my needs.
 
 Change `preprocess/preprocess_settings.json` and `features/features_settings.json` to your desired settings before use.
 
