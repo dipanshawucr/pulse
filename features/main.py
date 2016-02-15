@@ -14,6 +14,7 @@ from features.conservation_conversion_query import create_query_file
 from features.convert_from_hg19_hg18 import use_remap_api
 from features.seq_conserv import generate_sequence_conservation_features
 from features.event_conserv import generate_event_conservation_feature_table
+from features.network_features import generate_network_features
 from helpers.normalize_unicode_data import normalize_unicode_data
 
 
@@ -155,13 +156,21 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
             #                                         remapped_coordinates_file, sequence_conservation_output_location)
             # print "Finished generating sequence conservation features."
 
-            print "Now generating event_conservation feature table..."
-            f_event_conservation_db_location = normalize_unicode_data(features_settings["F_EVENT_CONSERVATION_LOCATION"])
-            event_conservation_output = feature_extract_output_path + '/eventCon_read.out'
-            generate_event_conservation_feature_table(f_phastcons_db_location, f_event_conservation_db_location,
-                                                      as_location_file, remapped_coordinates_file,
-                                                      event_conservation_output)
-            print "Finished generating event_conservation feature table."
+            # print "Now generating event_conservation feature table..."
+            # f_event_conservation_db_location = normalize_unicode_data(features_settings["F_EVENT_CONSERVATION_LOCATION"])
+            # event_conservation_output = feature_extract_output_path + '/eventCon_read.out'
+            # generate_event_conservation_feature_table(f_phastcons_db_location, f_event_conservation_db_location,
+            #                                           as_location_file, remapped_coordinates_file,
+            #                                           event_conservation_output)
+            # print "Finished generating event_conservation feature table."
+
+            print "Now generating network features using gene names..."
+            f_uniprot_genewiki_location = normalize_unicode_data(features_settings["F_UNIPROT_GENEWIKI_LOCATION"])
+            f_degree_location = normalize_unicode_data(features_settings["F_DEGREE_LOCATION"])
+            network_features_output_location = feature_extract_output_path + '/degree_read.out'
+            generate_network_features(f_uniprot_genewiki_location, f_degree_location, iupred_isoforms_output_location,
+                                      network_features_output_location)
+            print "Finished generating network features."
         else:
             print "Remapping failed"
             exit()
