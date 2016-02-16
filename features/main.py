@@ -168,7 +168,7 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
             f_uniprot_genewiki_location = normalize_unicode_data(features_settings["F_UNIPROT_GENEWIKI_LOCATION"])
             f_degree_location = normalize_unicode_data(features_settings["F_DEGREE_LOCATION"])
             network_features_output_location = feature_extract_output_path + '/degree_read.out'
-            generate_network_features(f_uniprot_genewiki_location, f_degree_location, iupred_isoforms_output_location,
+            generate_network_features(f_uniprot_genewiki_location, f_degree_location, uniprot_exon_indices_location,
                                       network_features_output_location)
             print "Finished generating network features."
         else:

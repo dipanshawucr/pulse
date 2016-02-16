@@ -1,4 +1,5 @@
 # generates network features using gene names
+import time
 
 
 def generate_dict_uniprot(file_gene_id_index):
@@ -20,7 +21,8 @@ def generate_network_features(f_uniprot_genewiki_location, f_degree_location, ma
     dict_uniprot = {}
     name_to_unigene = {}
     dict_gene_wiki = generate_dict_uniprot(file_gene_id_index)
-
+    print "Finished dict_gene_wiki"
+    time.sleep(2)
     # LOAD TABLE ISOFORM-ANCHOR_Uniprot
     # Return a Dict key:Uniprot Value:Alt Splt ID
     for line in file_anchor_map:
@@ -40,7 +42,6 @@ def generate_network_features(f_uniprot_genewiki_location, f_degree_location, ma
     for line in f_degree_db:
         print line
         tokens = line.split(",")
-
         name = tokens[1].strip()
         score = tokens[2].strip()
         print name, score

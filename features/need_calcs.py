@@ -80,4 +80,4 @@ for line in readFrom1:
                 print >> writepfam, dict_canonical[prot]
                 needp[prot] = 1
         else:
-            print '>'+ prot
+            print '>' + prot
