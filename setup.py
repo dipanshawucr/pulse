@@ -12,7 +12,7 @@ import os
 
 
 def setup_for_samtools_and_cufflinks():
-    paths_to_create = [r'./input/cell_lines', r'./output/for_preprocess']
+    paths_to_create = [r'./input/cell_lines', r'./output', r'./output/for_preprocess']
     for path in paths_to_create:
         if not os.path.exists(path):
             os.makedirs(path)
@@ -33,9 +33,19 @@ def setup_for_feature_extraction():
         if not os.path.exists(path):
             os.makedirs(path)
 
+
+# ML SETUP
+def setup_for_machine_learning():
+    paths_to_create = [r'./output', r'./output/machine']
+    for path in paths_to_create:
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+
 if __name__ == "__main__":
     setup_for_samtools_and_cufflinks()
     print("Make sure you add your raw .bam files for your cell lines"
           " into input/cell_lines!")
     setup_for_preprocess()
     setup_for_feature_extraction()
+    setup_for_machine_learning()

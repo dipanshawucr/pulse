@@ -14,6 +14,7 @@ from features.conservation_conversion_query import create_query_file
 from features.convert_from_hg19_hg18 import use_remap_api
 from features.seq_conserv import generate_sequence_conservation_features
 from features.event_conserv import generate_event_conservation_feature_table
+from features.generate_ml_input import generate_machine_learning_matrix
 from features.network_features import generate_network_features
 from helpers.normalize_unicode_data import normalize_unicode_data
 
@@ -34,7 +35,7 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
     uniprot_exon_indices_location = preprocess_input_path + '/uniprot_exon_indices_map.out'
     #
     # uniprot_tm_indices_db_location = normalize_unicode_data(features_settings["F_UNIPROT_TRANSMEM_INDICES_LOCATION"])
-    # uniprot_tm_read_output_location = feature_extract_output_path + '/transmem_read.out'
+    uniprot_tm_read_output_location = feature_extract_output_path + '/transmem_read.out'
     # get_transmembrane_region_features(uniprot_exon_indices_location, uniprot_tm_indices_db_location,
     #                                   uniprot_tm_read_output_location)
     # print "Finished getting transmembrane region features."
@@ -45,7 +46,7 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
     #
     # print "Now getting post-transcriptional modifications..."
     # uniprot_ptm_db_location = normalize_unicode_data(features_settings["F_PTMS_LOCATION"])
-    # uniprot_ptm_read_output_location = feature_extract_output_path + '/ptm_read.out'
+    uniprot_ptm_read_output_location = feature_extract_output_path + '/ptm_read.out'
     # get_postranscriptional_modification_features(uniprot_exon_indices_location, uniprot_ptm_db_location,
     #                                              uniprot_ptm_read_output_location)
     # print "Finished getting post-transcriptional modification features."
@@ -56,7 +57,7 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
     #
     # print "Now getting eukaryotic linear motif scores..."
     # uniprot_elm_db_location = normalize_unicode_data(features_settings["F_ELM2_LOCATION"])
-    # uniprot_elm_read_output_location = feature_extract_output_path + '/elm_read.out'
+    uniprot_elm_read_output_location = feature_extract_output_path + '/elm_read.out'
     # get_uniprot_elm_features(uniprot_exon_indices_location, uniprot_elm_db_location, uniprot_elm_read_output_location)
     # print "Finished getting eukaryotic linear motif scores."
     #
@@ -78,7 +79,7 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
     #
     # print "Now getting disorderome features..."
     canonical_db_location = pulse_path + '/input/info_canonical_v3.ddbb'
-    # disorder_read_out_location = feature_extract_output_path + '/disorder_read.out'
+    disorder_read_out_location = feature_extract_output_path + '/disorder_read.out'
     # get_uniprot_disorder_features(pulse_path, uniprot_exon_indices_location, iupred_isoforms_output_location,
     #                               canonical_db_location, disorder_read_out_location)
     # print "Finished getting disorderome features."
@@ -90,7 +91,7 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
     # print "Now running pfam_scan..."
     # pfam_scan_script_location = pulse_path + '/helpers/pfam_scan.pl'
     # pfam_input_location = preprocess_input_path + '/p_seq_isoforms.fas'
-    # pfam_output_location = feature_extract_output_path + '/pfam_done.out'
+    pfam_output_location = feature_extract_output_path + '/pfam_done.out'
     # hmmer3_data_location = normalize_unicode_data(features_settings["HMMER3_DATA_LOCATION"])
     # pfam_exit_code = start_pfam_scan(pfam_scan_script_location, pfam_input_location,
     #                                  pfam_output_location, hmmer3_data_location)
@@ -99,7 +100,7 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
         # print "pfam_scan successful"
         # print "Now getting uniprot domain features..."
         # f_pfam_special_db_location = normalize_unicode_data(features_settings["F_PFAM_SPECIAL_LOCATION"])
-        # domain_read_output_location = feature_extract_output_path + '/domain_read.out'
+        domain_read_output_location = feature_extract_output_path + '/domain_read.out'
         # get_uniprot_domain_read(f_pfam_special_db_location, canonical_db_location, uniprot_exon_indices_location,
         #                         pfam_output_location, domain_read_output_location)
         # print "Finished getting uniprot domain features."
@@ -110,7 +111,7 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
         #
         # print "Now getting features for SABLE..."
         # f_sable_db_location = normalize_unicode_data(features_settings["F_SABLE_LOCATION"])
-        # uniprot_core_output_location = feature_extract_output_path + '/core_read.out'
+        uniprot_core_output_location = feature_extract_output_path + '/core_read.out'
         # get_sable_scores(uniprot_exon_indices_location, f_sable_db_location, uniprot_core_output_location)
         # print "Finished getting features for SABLE."
 
@@ -120,7 +121,7 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
         #
         # print "Now getting mutation scores..."
         # f_mutations_db_location = normalize_unicode_data(features_settings["F_MUTATIONS_LOCATION"])
-        # mutation_features_output_location = feature_extract_output_path + '/mutation_read.out'
+        mutation_features_output_location = feature_extract_output_path + '/mutation_read.out'
         # get_mutation_features(uniprot_exon_indices_location, f_mutations_db_location,
         #                       mutation_features_output_location)
         # print "Finished getting mutation scores."
@@ -140,7 +141,7 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
         # remap_from = "GCF_000001405.13"
         # remap_to = "GCF_000001405.12"
         # remap_input_location = conservation_query_output_location
-        # remap_output_location = feature_extract_output_path + '/report_conservationQuery.txt.xls'
+        remap_output_location = feature_extract_output_path + '/report_conservationQuery.txt.xls'
         # remap_exit_code = use_remap_api(remap_api_location, remap_mode, remap_from, remap_to,
         #                                 remap_input_location, remap_output_location)
         # print "Conversion complete."
@@ -151,14 +152,14 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
             f_phastcons_db_location = normalize_unicode_data(features_settings["F_PHASTCONS_HG18_BED_LOCATION"])
             as_location_file = preprocess_input_path + '/as_location.out'
             remapped_coordinates_file = feature_extract_output_path + '/report_conservationQuery.txt'
-            # sequence_conservation_output_location = feature_extract_output_path + '/sequenceCon_read.out'
+            sequence_conservation_output_location = feature_extract_output_path + '/sequenceCon_read.out'
             # generate_sequence_conservation_features(f_phastcons_db_location, as_location_file,
             #                                         remapped_coordinates_file, sequence_conservation_output_location)
             # print "Finished generating sequence conservation features."
 
             # print "Now generating event_conservation feature table..."
             # f_event_conservation_db_location = normalize_unicode_data(features_settings["F_EVENT_CONSERVATION_LOCATION"])
-            # event_conservation_output = feature_extract_output_path + '/eventCon_read.out'
+            event_conservation_output = feature_extract_output_path + '/eventCon_read.out'
             # generate_event_conservation_feature_table(f_phastcons_db_location, f_event_conservation_db_location,
             #                                           as_location_file, remapped_coordinates_file,
             #                                           event_conservation_output)
@@ -171,6 +172,22 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
             generate_network_features(f_uniprot_genewiki_location, f_degree_location, uniprot_exon_indices_location,
                                       network_features_output_location)
             print "Finished generating network features."
+
+            ###############################
+            # GENERATE MATRIX OF FEATURES #
+            ###############################
+
+            print "Now generating ML input..."
+            generated_ml_output = feature_extract_output_path + '/features_headers.txt'
+            generated_ml_names = feature_extract_output_path + '/names.txt'
+            generate_machine_learning_matrix(uniprot_exon_indices_location, uniprot_core_output_location,
+                                             network_features_output_location, domain_read_output_location,
+                                             uniprot_elm_read_output_location, event_conservation_output,
+                                             mutation_features_output_location, uniprot_ptm_read_output_location,
+                                             sequence_conservation_output_location, uniprot_tm_read_output_location,
+                                             generated_ml_output, generated_ml_names)
+            print "Finished generating ML input."
+
         else:
             print "Remapping failed"
             exit()

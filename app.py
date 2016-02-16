@@ -78,5 +78,12 @@ if __name__ == "__main__":
     ###########
     # ML STEP #
     ###########
+    print "Now entering machine learning step."
+    proceed_to_machine_learning = raw_input("Press Y to proceed to machine learning step: ")
+    if proceed_to_machine_learning == "Y":
+        pass
+    else:
+        print "Invalid input. Skipping machine learning step..."
+        pass
 
     # TODO: Port random forest classifier over to Python

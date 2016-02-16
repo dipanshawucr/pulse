@@ -1,5 +1,5 @@
 # reads isoforms index, return a file with all that need salble calcs
-
+# check if one of the anchors need to be calculated in sable or in pfam
 
 try:
     map_file = sys.argv[1]
