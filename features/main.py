@@ -178,8 +178,9 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
             ###############################
 
             print "Now generating ML input..."
-            generated_ml_output = feature_extract_output_path + '/features_headers.txt'
-            generated_ml_names = feature_extract_output_path + '/names.txt'
+            machine_learning_output_path = pulse_path + '/output/machine/' + cell_line
+            generated_ml_output = machine_learning_output_path + '/features_headers.txt'
+            generated_ml_names = machine_learning_output_path + '/names.txt'
             ts_read = normalize_unicode_data(features_settings["ML_AS_EVENT_CLASSIFICATION"])
             generate_machine_learning_matrix(uniprot_exon_indices_location, uniprot_core_output_location,
                                              network_features_output_location,

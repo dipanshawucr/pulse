@@ -23,8 +23,8 @@ def create_paths_for_cell_line(pulse_path, cell_line):
 
 
 def score_differences(mapping, uniprot, start, end):
+    count = 0
     try:
-        count = 0
         if uniprot in mapping:
             if start <= end:
                 for i in range(start, end + 1):

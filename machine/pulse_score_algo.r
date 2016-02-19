@@ -27,6 +27,7 @@ Y = cbind(rep(0, N))
 #EDIT UNDER NEEDS
 features = read.table('/home/wonjunetai/Documents/KimLab/pulse/input/param_files/ML_Training_data.txt', sep=',', header=TRUE)
 N = dim(Y)[1]
+print(as.character(N))
 
 #define positive and negative sets here
 pset = features[1:M,]
@@ -132,7 +133,7 @@ importance = importance / numIterations
 #These are the prediction scores for extra data features file averaged over numIterations
 extraScores <- extraScores / numIterations
 #write the scores
-write(extraScores, "PULSE_Output.txt", sep="\n")
+write(extraScores, "../output/machine/G41726.MCF7.5.bam/PULSE_output.txt", sep="\n")
 #These three score vectors is essentially the output
 
 print("done")

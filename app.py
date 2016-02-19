@@ -6,6 +6,8 @@ from for_preprocess import for_preprocess, cufflinks, samtools
 from preprocess.reference_genome import load_and_pickle_reference_genome, load_pickled_reference_genome
 from preprocess.main import preprocess_cell_line
 from features.main import feature_extract_cell_line
+import features.features_helpers
+import machine
 
 try:
     PULSE_PATH = os.environ['PULSE_PATH']
@@ -81,7 +83,9 @@ if __name__ == "__main__":
     print "Now entering machine learning step."
     proceed_to_machine_learning = raw_input("Press Y to proceed to machine learning step: ")
     if proceed_to_machine_learning == "Y":
-        pass
+        all_cell_lines_for_machine = os.listdir(PULSE_PATH + '/output/features')
+        for cell_line in all_cell_lines_for_machine:
+            features.features_helpers.create_paths_for_cell_line(PULSE_PATH, cell_line)
     else:
         print "Invalid input. Skipping machine learning step..."
         pass
