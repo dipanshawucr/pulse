@@ -165,13 +165,13 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
             #                                           event_conservation_output)
             # print "Finished generating event_conservation feature table."
 
-            print "Now generating network features using gene names..."
-            f_uniprot_genewiki_location = normalize_unicode_data(features_settings["F_UNIPROT_GENEWIKI_LOCATION"])
-            f_degree_location = normalize_unicode_data(features_settings["F_DEGREE_LOCATION"])
+            # print "Now generating network features using gene names..."
+            # f_uniprot_genewiki_location = normalize_unicode_data(features_settings["F_UNIPROT_GENEWIKI_LOCATION"])
+            # f_degree_location = normalize_unicode_data(features_settings["F_DEGREE_LOCATION"])
             network_features_output_location = feature_extract_output_path + '/degree_read.out'
-            generate_network_features(f_uniprot_genewiki_location, f_degree_location, uniprot_exon_indices_location,
-                                      network_features_output_location)
-            print "Finished generating network features."
+            # generate_network_features(f_uniprot_genewiki_location, f_degree_location, uniprot_exon_indices_location,
+            #                           network_features_output_location)
+            # print "Finished generating network features."
 
             ###############################
             # GENERATE MATRIX OF FEATURES #
@@ -180,12 +180,14 @@ def feature_extract_cell_line(cell_line, pulse_path, preprocess_input_path, feat
             print "Now generating ML input..."
             generated_ml_output = feature_extract_output_path + '/features_headers.txt'
             generated_ml_names = feature_extract_output_path + '/names.txt'
+            ts_read = normalize_unicode_data(features_settings["ML_AS_EVENT_CLASSIFICATION"])
             generate_machine_learning_matrix(uniprot_exon_indices_location, uniprot_core_output_location,
-                                             network_features_output_location, domain_read_output_location,
+                                             network_features_output_location,
+                                             disorder_read_out_location, domain_read_output_location,
                                              uniprot_elm_read_output_location, event_conservation_output,
                                              mutation_features_output_location, uniprot_ptm_read_output_location,
                                              sequence_conservation_output_location, uniprot_tm_read_output_location,
-                                             generated_ml_output, generated_ml_names)
+                                             ts_read, generated_ml_output, generated_ml_names)
             print "Finished generating ML input."
 
         else:

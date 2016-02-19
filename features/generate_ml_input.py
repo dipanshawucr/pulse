@@ -37,7 +37,8 @@ def convert_list(input_list):
 
 
 def generate_machine_learning_matrix(map_file, core_read, degree_read, disorder_read, domain_read, elm_read,
-                                     event_con_read, mutation_read, ptm_read, sequence_con_read, transmem_read,
+                                     event_con_read, mutation_read, ptm_read, sequence_con_read, transmem_read,\
+                                     ts_file_location,
                                      write_all_output, write_all_names_output):
     map_file_obj = open(map_file, 'r')
 
@@ -55,7 +56,7 @@ def generate_machine_learning_matrix(map_file, core_read, degree_read, disorder_
     # This feature must be make ad hoc for our data (Event classification)
     # Please, read the supplementary Material
     # or just ignore this feature, notice the global score distribution will be affected
-    # readTS = open(PulsePATH+'/src_features/param_files/ML_AS_Event_Classification.inp', 'r')
+    read_ts = open(ts_file_location, 'r')
 
     write_all = open(write_all_output, 'w')
     write_all_names = open(write_all_names_output, 'w')
@@ -86,13 +87,13 @@ def generate_machine_learning_matrix(map_file, core_read, degree_read, disorder_
     read_features(sequenceCon_read, read_sequence_con, False)
     read_features(eventCon_read, read_event_con, False)
 
-    # for line in readTS:
-    #     tokens = line.split()
-    #     asid = tokens[0]
-    #     ts = 0
-    #     if tokens[2] == "TS":
-    #         ts = 1
-    #     ts_read[asid] = ts
+    for line in read_ts:
+        tokens = line.split()
+        asid = tokens[0]
+        ts = 0
+        if tokens[2] == "TS":
+            ts = 1
+        ts_read[asid] = ts
 
     output_positiveI = []
     output_uniprotI = []
@@ -164,11 +165,11 @@ def generate_machine_learning_matrix(map_file, core_read, degree_read, disorder_
         if asid[0] == "E":
             output_positiveE.append([dual_key, feature_line])
 
-    header = "frameshift, spliceLength, len_diff, nlenDiff, len_after, coreC1, coreA, coreC2, canCore, disorderC1, " \
-             "disorderA, disorderC2, canDisorder, otherDisorder, otherADis, domainC1, domainA, domainC2, canDomain, " \
-             "otherDomain, otherADom, enzymatic, elmC1, elmA, elmC2, canElm, mutationC1, mutationA, mutationC2, " \
-             "canMutation, ptmC1, ptmA, ptmC2, canPtm, transmemC1, transmemA, transmemC2, canTransmem, degree, " \
-             "seqConAve, seqConMin, seqConMax, classifier, spSpec, consAS, gspec, ts"
+    header = "frameshift,spliceLength,lenDiff,nlenDiff,lenAfter,coreC1,coreA,coreC2,canCore,disorderC1," \
+             "disorderA,disorderC2,canDisorder,otherDisorder,otherADis,domainC1,domainA,domainC2,canDomain," \
+             "otherDomain,otherADom,enzymatic,elmC1,elmA,elmC2,canElm,mutationC1,mutationA,mutationC2," \
+             "canMutation,ptmC1,ptmA,ptmC2,canPtm,transmemC1,transmemA,transmemC2,canTransmem,degree," \
+             "seqConAve,seqConMin,seqConMax,classifier,spSpec,consAS,gspec,ts"
 
     print >> write_all, "IE, " + header
     for t in output_positiveI:

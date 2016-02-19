@@ -10,5 +10,6 @@
   "F_PHASTCONS_HG18_BED_LOCATION": "/home/wonjunetai/Documents/KimLab/pulse/input/param_files/F_phastCons.hg18.bed.inp",
   "F_EVENT_CONSERVATION_LOCATION": "/home/wonjunetai/Documents/KimLab/pulse/input/param_files/F_eventConservation.inp",
   "F_UNIPROT_GENEWIKI_LOCATION": "/home/wonjunetai/Documents/KimLab/pulse/input/param_files/F_uniprot_genewiki.index.inp",
-  "F_DEGREE_LOCATION": "/home/wonjunetai/Documents/KimLab/pulse/input/param_files/F_degree.inp"
+  "F_DEGREE_LOCATION": "/home/wonjunetai/Documents/KimLab/pulse/input/param_files/F_degree.inp",
+  "ML_AS_EVENT_CLASSIFICATION": "/home/wonjunetai/Documents/KimLab/pulse/input/param_files/ML_AS_Event_Classification.inp"
 }
