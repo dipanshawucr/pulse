@@ -43,6 +43,30 @@ First, insert all of your .bam files into ```input/cell_lines```, and then run:
 python app.py
 ```
 
+### PIPELINE
+
+_Preprocessing_
+
+1. Cufflinks generates transcriptome from sequence alignment data (.bam file).
+2. Find exon-skipping alternative splicing events from transcriptome.
+3. Identify anchors to alternative splicing events using BLAST.
+4. Filter out alternative splicing events without a good anchor.
+5. Generate an index file to locations of alternative splcing events.
+
+_Feature Extraction_
+
+1. Transmembrane scoring.
+2. Post transcriptional modification scoring.
+3. Eukaryotic linear motif scoring.
+4. Disorderome scoring.
+5. Domain scoring using PFAM.
+6. Sable scoring.
+7. Mutation scoring.
+8. Conservation/network features generation.
+
+_Machine Learning Step_
+
+Five iterations of random forest classifier - takes the average of all iterations to generate final votes from ensemble and importance of each feature.
 
 ### TODO:
 * Need to download the uniprot using API and insert into pulse/input. After the uniprot_sprot file is downloaded into input/, need to run:
