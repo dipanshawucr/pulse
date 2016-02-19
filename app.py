@@ -18,14 +18,17 @@ except KeyError:
 
 if __name__ == "__main__":
     all_cell_lines = os.listdir(PULSE_PATH + "/input/cell_lines")
+    print "Found cell lines: "
+    print all_cell_lines
+    print ""
 
     ##########################
     # SAMTOOLS AND CUFFLINKS #
     ##########################
 
-    proceed_to_samtools_cufflinks = raw_input("Press Y to proceed to cufflinks and samtools: ")
-    if proceed_to_samtools_cufflinks == 'Y':
-        for cell_line in all_cell_lines:
+    for cell_line in all_cell_lines:
+        proceed_to_samtools_cufflinks = raw_input("Press Y to proceed to cufflinks and samtools for " + cell_line + ": ")
+        if proceed_to_samtools_cufflinks == 'Y':
             for_preprocess.create_paths_for_cell_line(cell_line)
             print "for_preprocessing paths created for: " + cell_line
             print "Running samtools for: " + cell_line
@@ -38,23 +41,22 @@ if __name__ == "__main__":
         "Invalid input. Skipping samtools and cufflinks step..."
         pass
 
-    proceed_to_preprocessing = raw_input("Press Y to proceed to preprocessing: ")
-
     #################
     # PREPROCESSING #
     #################
+    # TODO: Should move pickling and loading of reference genome to preprocess/main.py
+    # Uncomment below to load and pickle reference genome.
+    # print "LOADING AND PICKLING REFERENCE GENOME."
+    # load_and_pickle_reference_genome(PULSE_PATH, PREPROCESS_SETTINGS)
+    # print "SUCCESSFULLY PICKLED REFERENCE GENOME!"
+    print "LOADING PICKLED REFERENCE GENOME (happens only once for all cell lines)..."
+    ref_genome = load_pickled_reference_genome(PULSE_PATH)
+    print "PICKLED REFERENCE GENOME LOADED!"
 
-    if proceed_to_preprocessing == 'Y':
-        # TODO: Should move pickling and loading of reference genome to preprocess/main.py
-        # Uncomment below to load and pickle reference genome.
-        # print "LOADING AND PICKLING REFERENCE GENOME."
-        # load_and_pickle_reference_genome(PULSE_PATH, PREPROCESS_SETTINGS)
-        # print "SUCCESSFULLY PICKLED REFERENCE GENOME!"
-        print "LOADING PICKLED REFERENCE GENOME (happens only once for all cell lines)..."
-        ref_genome = load_pickled_reference_genome(PULSE_PATH)
-        print "PICKLED REFERENCE GENOME LOADED!"
-        all_cell_lines_for_preprocess = os.listdir(PULSE_PATH + '/output/for_preprocess')
-        for cell_line in all_cell_lines_for_preprocess:
+    all_cell_lines_for_preprocess = os.listdir(PULSE_PATH + '/output/for_preprocess')
+    for cell_line in all_cell_lines_for_preprocess:
+        proceed_to_preprocessing = raw_input("Press Y to proceed to preprocessing for " + cell_line + ": ")
+        if proceed_to_preprocessing == 'Y':
             PREPROCESS_OUTPUT_PATH = PULSE_PATH + '/output/preprocess/' + cell_line
             preprocess_cell_line(cell_line, ref_genome, PULSE_PATH, PREPROCESS_OUTPUT_PATH)
     else:
@@ -66,10 +68,11 @@ if __name__ == "__main__":
     ######################
 
     print "Now entering feature extraction."
-    proceed_to_feature_extraction = raw_input("Press Y to proceed to feature extraction: ")
-    if proceed_to_feature_extraction == "Y":
-        all_cell_lines_for_features = os.listdir(PULSE_PATH + '/output/preprocess')
-        for cell_line in all_cell_lines_for_features:
+
+    all_cell_lines_for_features = os.listdir(PULSE_PATH + '/output/preprocess')
+    for cell_line in all_cell_lines_for_features:
+        proceed_to_feature_extraction = raw_input("Press Y to proceed to feature extraction for " + cell_line + ": ")
+        if proceed_to_feature_extraction == "Y":
             PREPROCESS_OUTPUT_PATH = PULSE_PATH + '/output/preprocess/' + cell_line
             FEATURE_EXTRACT_OUTPUT_PATH = PULSE_PATH + '/output/features/' + cell_line
             feature_extract_cell_line(cell_line, PULSE_PATH, PREPROCESS_OUTPUT_PATH, FEATURE_EXTRACT_OUTPUT_PATH)

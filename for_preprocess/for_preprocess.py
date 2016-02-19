@@ -17,9 +17,9 @@ def create_paths_for_cell_line(cell_line):
     :param cell_line:
     :return:
     """
-    paths_to_create = [r'../output/for_preprocess/' + cell_line,
-                       r'../output/for_preprocess/' + cell_line + r'/no-rg',
-                       r'../output/for_preprocess/' + cell_line + r'/cufflinks_output']
+    paths_to_create = [r'output/for_preprocess/' + cell_line,
+                       r'output/for_preprocess/' + cell_line + r'/no-rg',
+                       r'output/for_preprocess/' + cell_line + r'/cufflinks_output']
     for path in paths_to_create:
         if not os.path.exists(path):
             os.makedirs(path)
