@@ -5,6 +5,7 @@ This repo is a refactoring of @ccorbi's main pulse pipeline for my needs.
 Change `preprocess/preprocess_settings.json` and `features/features_settings.json` to your desired settings before use.
 
 ### DEPENDENCIES
+* python2.7
 * preprocessing requires cufflinks and samtools
 * BLAST is required in the preprocessing step after alternative splice site extraction
 * last step of the preprocessing step requires the [biopython package](https://github.com/biopython/biopython)
@@ -33,6 +34,15 @@ Use `readlink -e .` when you're in root, and export that variable to PULSE_PATH 
 ```
 export PULSE_PATH=<result from readlink -e .>
 ```
+
+### USAGE
+
+First, insert all of your .bam files into ```input/cell_lines```, and then run:  
+
+```
+python app.py
+```
+
 
 ### TODO:
 * Need to download the uniprot using API and insert into pulse/input. After the uniprot_sprot file is downloaded into input/, need to run:
