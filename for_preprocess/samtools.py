@@ -4,7 +4,13 @@ import subprocess
 
 
 def run_samtools(pulse_path, cell_line_for_samtools):
+    """
+    Runs samtools.
 
+    :param pulse_path:
+    :param cell_line_for_samtools:
+    :return:
+    """
     command1 = ['samtools', 'view', '-h', pulse_path + '/input/cell_lines/' + cell_line_for_samtools]
     command2 = ['grep',  '-v', '@RG']
     command3 = ['samtools', 'view', '-Sbh', '-']

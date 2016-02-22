@@ -14,6 +14,7 @@ def submit_new_job(script_name, list_of_args=[]):
     :param list_of_args:
     :return:
     """
+
     command1 = ['submitjob',
                 '48',
                 '-m',

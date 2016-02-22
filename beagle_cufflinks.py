@@ -1,6 +1,8 @@
 # The most time-expensive tasks are for_preprocessing
 # (cufflinks and samtools) and preprocessing (blast)
-# For every cell line, this script submits a samtools task.
+# For every cell line, this script submits a cufflinks task.
+
+# For dependencies, check for_preprocess/cufflinks
 
 import os
 from submit_job import submit_new_job
@@ -19,4 +21,4 @@ if __name__ == "__main__":
     print(all_cell_lines)
     for cell_line in all_cell_lines:
         for_preprocess.create_paths_for_cell_line(cell_line)
-        submit_new_job('for_preprocess/samtools.py', ['-p', PULSE_PATH, '-c', cell_line])
+        submit_new_job('for_preprocess/cufflinks.py', ['-p', PULSE_PATH, '-c', cell_line])
