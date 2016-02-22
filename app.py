@@ -44,6 +44,7 @@ if __name__ == "__main__":
     #################
     # PREPROCESSING #
     #################
+
     # TODO: Should move pickling and loading of reference genome to preprocess/main.py
     # Uncomment below to load and pickle reference genome.
     # print "LOADING AND PICKLING REFERENCE GENOME."
