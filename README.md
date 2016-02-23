@@ -32,6 +32,8 @@ cd pulse
 python setup.py # set up all directories for pipeline output
 ```
 
+Need to import info\_canonical\_v3.ddbb, refGenome/, uniprot\_sprot.fasta, and param_files/.
+
 Use `readlink -e .` when you're in root, and export that variable to PULSE_PATH using:
 ```
 export PULSE_PATH=<result from readlink -e .>
