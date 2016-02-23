@@ -15,6 +15,7 @@ def setup_for_samtools_and_cufflinks():
     paths_to_create = [r'./input/cell_lines', r'./output', r'./output/for_preprocess']
     for path in paths_to_create:
         if not os.path.exists(path):
+            print("Path created: ", path)
             os.makedirs(path)
 
 
@@ -23,6 +24,7 @@ def setup_for_preprocess():
     paths_to_create = [r'./output', r'./output/preprocess']
     for path in paths_to_create:
         if not os.path.exists(path):
+            print("Path created: ", path)
             os.makedirs(path)
 
 
@@ -31,6 +33,7 @@ def setup_for_feature_extraction():
     paths_to_create = [r'./output', r'./output/features']
     for path in paths_to_create:
         if not os.path.exists(path):
+            print("Path created: ", path)
             os.makedirs(path)
 
 
@@ -39,6 +42,7 @@ def setup_for_machine_learning():
     paths_to_create = [r'./output', r'./output/machine']
     for path in paths_to_create:
         if not os.path.exists(path):
+            print("Path created: ", path)
             os.makedirs(path)
 
 
