@@ -12,15 +12,15 @@ import machine
 try:
     PULSE_PATH = os.environ['PULSE_PATH']
 except KeyError:
-    print 'Environment variable PULSE_PATH not setup'
-    print 'Using working directory'
+    print('Environment variable PULSE_PATH not setup')
+    print('Using working directory')
     PULSE_PATH = os.getcwd()
 
 if __name__ == "__main__":
     all_cell_lines = os.listdir(PULSE_PATH + "/input/cell_lines")
-    print "Found cell lines: "
-    print all_cell_lines
-    print ""
+    print("Found cell lines: ")
+    print(all_cell_lines)
+    print()
 
     ##########################
     # SAMTOOLS AND CUFFLINKS #
@@ -30,13 +30,13 @@ if __name__ == "__main__":
         proceed_to_samtools_cufflinks = raw_input("Press Y to proceed to cufflinks and samtools for " + cell_line + ": ")
         if proceed_to_samtools_cufflinks == 'Y':
             for_preprocess.create_paths_for_cell_line(cell_line)
-            print "for_preprocessing paths created for: " + cell_line
-            print "Running samtools for: " + cell_line
+            print("for_preprocessing paths created for: " + cell_line)
+            print("Running samtools for: " + cell_line)
             samtools.run_samtools(PULSE_PATH, cell_line)
-            print "Finished samtools for: " + cell_line
-            print "Running cufflinks for: " + cell_line
+            print("Finished samtools for: " + cell_line)
+            print("Running cufflinks for: " + cell_line)
             cufflinks.run_cufflinks(PULSE_PATH, cell_line)
-            print "Finished cufflinks for: " + cell_line
+            print("Finished cufflinks for: " + cell_line)
     else:
         "Invalid input. Skipping samtools and cufflinks step..."
         pass
@@ -50,9 +50,9 @@ if __name__ == "__main__":
     # print "LOADING AND PICKLING REFERENCE GENOME."
     # load_and_pickle_reference_genome(PULSE_PATH, PREPROCESS_SETTINGS)
     # print "SUCCESSFULLY PICKLED REFERENCE GENOME!"
-    print "LOADING PICKLED REFERENCE GENOME (happens only once for all cell lines)..."
+    print("LOADING PICKLED REFERENCE GENOME (happens only once for all cell lines)...")
     ref_genome = load_pickled_reference_genome(PULSE_PATH)
-    print "PICKLED REFERENCE GENOME LOADED!"
+    print("PICKLED REFERENCE GENOME LOADED!")
 
     all_cell_lines_for_preprocess = os.listdir(PULSE_PATH + '/output/for_preprocess')
     for cell_line in all_cell_lines_for_preprocess:
@@ -61,14 +61,14 @@ if __name__ == "__main__":
             PREPROCESS_OUTPUT_PATH = PULSE_PATH + '/output/preprocess/' + cell_line
             preprocess_cell_line(cell_line, ref_genome, PULSE_PATH, PREPROCESS_OUTPUT_PATH)
     else:
-        print "Invalid input. Skipping preprocessing step..."
+        print("Invalid input. Skipping preprocessing step...")
         pass
 
     ######################
     # FEATURE EXTRACTION #
     ######################
 
-    print "Now entering feature extraction."
+    print("Now entering feature extraction.")
 
     all_cell_lines_for_features = os.listdir(PULSE_PATH + '/output/preprocess')
     for cell_line in all_cell_lines_for_features:
@@ -78,20 +78,20 @@ if __name__ == "__main__":
             FEATURE_EXTRACT_OUTPUT_PATH = PULSE_PATH + '/output/features/' + cell_line
             feature_extract_cell_line(cell_line, PULSE_PATH, PREPROCESS_OUTPUT_PATH, FEATURE_EXTRACT_OUTPUT_PATH)
     else:
-        print "Invalid input. Skipping feature extraction..."
+        print("Invalid input. Skipping feature extraction...")
         pass
 
     ###########
     # ML STEP #
     ###########
-    print "Now entering machine learning step."
+    print("Now entering machine learning step.")
     proceed_to_machine_learning = raw_input("Press Y to proceed to machine learning step: ")
     if proceed_to_machine_learning == "Y":
         all_cell_lines_for_machine = os.listdir(PULSE_PATH + '/output/features')
         for cell_line in all_cell_lines_for_machine:
             features.features_helpers.create_paths_for_cell_line(PULSE_PATH, cell_line)
     else:
-        print "Invalid input. Skipping machine learning step..."
+        print("Invalid input. Skipping machine learning step...")
         pass
 
     # TODO: Port random forest classifier over to Python
