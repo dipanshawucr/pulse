@@ -22,6 +22,7 @@ def submit_new_job(script_name, list_of_args=[]):
                 '-c',
                 '4',
                 script_name] + list_of_args
+    print("Now executing: ", command1)
     p1 = subprocess.Popen(command1)
     exit_code = p1.wait()
     return exit_code
