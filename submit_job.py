@@ -16,11 +16,11 @@ def submit_new_job(script_name, time, memory, cpu, list_of_args=[]):
     """
 
     command1 = ['submitjob',
-                time,
+                str(time),
                 '-m',
-                memory,
+                str(memory),
                 '-c',
-                cpu,
+                str(cpu),
                 script_name] + list_of_args
     print("Now executing: ", command1)
     p1 = subprocess.Popen(command1)
