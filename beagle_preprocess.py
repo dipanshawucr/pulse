@@ -33,5 +33,5 @@ if __name__ == "__main__":
 
     for cell_line in all_cell_lines:
         PREPROCESS_OUTPUT_PATH = PULSE_PATH + '/output/preprocess/' + cell_line
-        submit_new_job(PULSE_PATH + '/preprocess/main.py', ['-c', cell_line, '-r', ref_genome, '-p', PULSE_PATH,
+        submit_new_job(PULSE_PATH + '/preprocess/main.py', 23, 4, 4, ['-c', cell_line, '-r', ref_genome, '-p', PULSE_PATH,
                                               '-o', PREPROCESS_OUTPUT_PATH])

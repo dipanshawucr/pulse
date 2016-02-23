@@ -21,4 +21,4 @@ if __name__ == "__main__":
     print(all_cell_lines)
     for cell_line in all_cell_lines:
         for_preprocess.create_paths_for_cell_line(cell_line)
-        submit_new_job(PULSE_PATH + '/for_preprocess/cufflinks.py', ['-p', PULSE_PATH, '-c', cell_line])
+        submit_new_job(PULSE_PATH + '/for_preprocess/cufflinks.py', 23, 3, 4, ['-p', PULSE_PATH, '-c', cell_line])
