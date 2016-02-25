@@ -4,7 +4,7 @@
 import subprocess
 
 
-def submit_new_job(script_name, list_of_args=[]):
+def submit_new_job(script_name, time, memory, cpu, list_of_args=[]):
     """
     Submits a new job to beagle with a max runtime for 48 hours,
     with 4 GB of memory, and 4 cores per job.
@@ -16,12 +16,13 @@ def submit_new_job(script_name, list_of_args=[]):
     """
 
     command1 = ['submitjob',
-                '48',
+                str(time),
                 '-m',
-                '4',
+                str(memory),
                 '-c',
-                '4',
+                str(cpu),
                 script_name] + list_of_args
+    print("Now executing: ", command1)
     p1 = subprocess.Popen(command1)
     exit_code = p1.wait()
     return exit_code

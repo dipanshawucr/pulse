@@ -32,7 +32,6 @@ if __name__ == "__main__":
     print("PICKLED REFERENCE GENOME LOADED!")
 
     for cell_line in all_cell_lines:
-        submit_new_job('for_preprocess/cufflinks.py', ['-p', PULSE_PATH, '-c', cell_line])
         PREPROCESS_OUTPUT_PATH = PULSE_PATH + '/output/preprocess/' + cell_line
-        submit_new_job('preprocess/main.py', ['-c', cell_line, '-r', ref_genome, '-p', PULSE_PATH,
+        submit_new_job(PULSE_PATH + '/preprocess/main.py', 23, 4, 4, ['-c', cell_line, '-r', ref_genome, '-p', PULSE_PATH,
                                               '-o', PREPROCESS_OUTPUT_PATH])
