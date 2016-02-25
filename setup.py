@@ -33,6 +33,7 @@ def setup_for_feature_extraction():
     paths_to_create = [r'./output', r'./output/features']
     for path in paths_to_create:
         if not os.path.exists(path):
+            print("Path created: ", path)
             os.makedirs(path)
 
 
