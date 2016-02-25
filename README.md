@@ -24,11 +24,15 @@ Change `preprocess/preprocess_settings.json` and `features/features_settings.jso
 
 ### SETUP
 
-To create the necessary directories for output from pipeline:
+Clone the repo, setup:
 
 ```
-python setup.py
+git clone https://github.com/wonjunetai/pulse.git
+cd pulse
+python setup.py # set up all directories for pipeline output
 ```
+
+Need to import info\_canonical\_v3.ddbb, refGenome/, uniprot\_sprot.fasta, and param_files/.
 
 Use `readlink -e .` when you're in root, and export that variable to PULSE_PATH using:
 ```
