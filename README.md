@@ -1,7 +1,7 @@
 # pulse
 predicting protein stability.
 This repo is a refactoring of @ccorbi's main pulse pipeline for my needs.
-From paper here: [Semi-supervised Learning Predicts Approximately One Third of the Alternative Splicing Isoforms as Functional Proteins](http://www.cell.com/cell-reports/pdf/S2211-1247(15\)00643-9.pdf).
+From paper here: [Semi-supervised Learning Predicts Approximately One Third of the Alternative Splicing Isoforms as Functional Proteins](http://www.cell.com/cell-reports/pdf/S2211-1247(15)00643-9.pdf).
 
 Change `preprocess/preprocess_settings.json` and `features/features_settings.json` to your desired settings before use.
 
